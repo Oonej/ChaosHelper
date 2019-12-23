@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<view icon="29925" title="Chaos Helper" width="335" height="220">
+  <control progid="DecalControls.Notebook" name="nbMain">
+    <page label=" ? ">
+      <control progid="DecalControls.FixedLayout" clipped="">
+        <control progid="DecalControls.StaticText" name="ChatCommandLbl" left="10" top="10" width="90" height="18" text="Chat Command:"/>
+        <control progid="DecalControls.Edit" name="ChatCommand" left="100" top="10" width="140" height="20" text="/f"/>
+        <control progid="DecalControls.PushButton" name="ChatCommandSet" left="250" top="10" width="70" height="20" text="Set"/>
+
+        <control progid="DecalControls.StaticText" name="ConfigLbl" left="10" top="48" width="90" height="18" text="Config File:"/>
+        <control progid="DecalControls.Choice" name="ConfigFiles" left="100" top="47" width="140" height="30"/>
+        <control progid="DecalControls.PushButton" name="ReloadConfig" left="250" top="45" width="70" height="20" text="Load"/>
+
+        <control progid="DecalControls.PushButton" name="SaveIni" left="10" top="80" width="314" height="20" text="Save Defaults"/>
+
+        <control progid="DecalControls.List" name="PopoutList" left="10" top="110" width="130" height="60"/>
+        
+        <control progid="DecalControls.StaticText" name="VersionLbl" left="190" top="130" width="200" height="18" text="Version 1.0"/>
+        <control progid="DecalControls.StaticText" name="Thnks" left="170" top="150" width="200" height="18" text="By: Invisible Fire of MT"/>
+      </control>
+    </page>
+
+  </control>
+</view>

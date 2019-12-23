@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<view icon="29925" title="Chaos Helper" width="335" height="230">
+  <control progid="DecalControls.FixedLayout" clipped="" name="popout">
+  </control>
+</view>
