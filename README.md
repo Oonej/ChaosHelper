@@ -1,5 +1,7 @@
 # ChaosHelper
 
+This is a simple, yet useful (I'm biased), decal plugin that will allow you to customize your commands and make everything a push button instead of using hotkeys and/or chat commands.
+
 ![sample screenshot](ChaosHelper.png)
 
 To use this plugin, add the files in the zip to the same directory of your choice and add the dll to decal.
