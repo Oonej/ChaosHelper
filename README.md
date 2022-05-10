@@ -1,48 +1,5 @@
 # ChaosHelper
 
-This is a clone of the released source code for **ChaosHelper** Decal plugin for Asheron's Call; with additional fixes/improvements.
-
-## Overview
-
-### About
-
-#### Original Description:
-This is a simple, yet useful (I'm biased), decal plugin that will allow you to customize your commands and make everything a push button instead of using hotkeys and/or chat commands.
-
-#### Original Source:
-http://www.immortalbob.com/phpBB3/viewtopic.php?f=25&t=282&sid=76b627477fa5b27afa154276ce9db28e
-
-### License / Build Info _(may be from SamplePlugin?)_
-```
-/*
- * Created by Mag-nus. 8/19/2011, VVS added by Virindi-Inquisitor.
- * 
- * No license applied, feel free to use as you wish. H4CK TH3 PL4N3T? TR45H1NG 0UR R1GHT5? Y0U D3C1D3!
- * 
- * Notice how I use try/catch on every function that is called or raised by decal (by base events or user initiated events like buttons, etc...).
- * This is very important. Don't crash out your users!
- * 
- * In 2.9.6.4+ Host and Core both have Actions objects in them. They are essentially the same thing.
- * You sould use Host.Actions though so that your code compiles against 2.9.6.0 (even though I reference 2.9.6.5 in this project)
- * 
- * If you add this plugin to decal and then also create another plugin off of this sample, you will need to change the guid in
- * Properties/AssemblyInfo.cs to have both plugins in decal at the same time.
- * 
- * If you have issues compiling, remove the Decal.Adapater and VirindiViewService references and add the ones you have locally.
- * Decal.Adapter should be in C:\Games\Decal 3.0\
- * VirindiViewService should be in C:\Games\VirindiPlugins\VirindiViewService\
-*/
-```
-
-### Credits
-Original Plugin: Invisible Fire of MT
-
-Additional Changes _(this repository)_: Strike Athius of RC
-
-
-
-## Original Plugin Information _(copied from forum post)_
-
 ![sample screenshot](ChaosHelper.png)
 
 To use this plugin, add the files in the zip to the same directory of your choice and add the dll to decal.
