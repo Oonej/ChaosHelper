@@ -22,27 +22,48 @@ New Chat commands were added in v1.2 which allows you to load configs and set ch
 - /ch settab # NEW
 
 ### Button Configuration File (.txt)
-First Line : This is the layout that will be associated with the button layout. Every config needs a layout!
 
-(columns represented by commas ',')
+###### Important Note : columns represented by commas ','
 
-First Column : this is how the script knows which buttons to set to what. <TabName>\_Button\_\#\#
+#### First Line : This is the layout that will be associated with the controls layout. Every config needs a layout!
+
+_ex:_ `LAYOUT: main.layout`
+
+#### All Other Lines : These define custom properties for your controls. Each entry needs 2-3 columns!
+
+_ex:_ `Adv_Button_01,Loot Rares,!loot rares`
+
+##### First Column : this is how the script knows which controls to set to what. `<TabName>_<ControlName>_##`
+
+_ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
+
+###### `<TabName>` should be replaced with:
+- `Basic`
+- `Adv`
+- _any of your custom tabs as defined in your `.layout` file_
   
-Second column : This is the text of the button. Set it how ever you wish! Example : Loot Rares
+###### `<ControlName>` should be replaced with:
+  - `Button` - a clickable button which issues a command
+  - `StaticText` - a text label
+
+###### `##` should be replaced with `01` and incrementing for each control you add.
   
--- If you wish for the button to be not visible, set the text to be NOTSET and it will hide from the screen.
+##### Second column : This is the text of the control. Set it how ever you wish!
+
+_ex:_ _Adv\_Button\_01,_**Loot Rares**_,!loot rares_
   
--- If you want a button to have an icon, add the icon value (Decimal! NOT Hex!) in brackets Example: [12345]
+- If you wish for the control to be not visible, set the text to be NOTSET and it will hide from the screen.  
+- If you want a control to have an icon, add the icon value (Decimal! NOT Hex!) in brackets Example: [12345]
   
-Third column : This is the command that will be sent to the chat. !loot rares
+##### Third column : This is the command that will be sent to the chat
+
+_ex:_ _Adv\_Button\_01,Loot Rares,_**!loot rares**
   
---You can now use any command prefix, aka ! or # or % or & etc etc...
-  
---If you want this to run a /command, just add the /command here. Be sure not to add more than one comma as it may bug it out. For instance: /tell Invisible Fire, boom! will work, but /tell invisible fire, hi, there! will not!
-  
---If you want this meta to only apply to the player calling the command, you can now use [player] to plug the player name into the command. EXAMPLE: /tell [player], I'm talking to myself... OUTPUT: "You think, "I'm talking to myself..."
-  
---If you want to display the coords of the player who calls the command, you can now use [loc] to plug the coordinates of the player into the command. Example: I'm located at [loc]! OUTPUT: "I'm located at 34.5s, 54.2w!
+- You can now use any command prefix, aka ! or # or % or & etc etc...  
+- If you want this to run a /command, just add the /command here. Be sure not to add more than one comma as it may bug it out. For instance: /tell Invisible Fire, boom! will work, but /tell invisible fire, hi, there! will not!  
+- If you want this meta to only apply to the player calling the command, you can now use [player] to plug the player name into the command. EXAMPLE: /tell [player], I'm talking to myself... OUTPUT: "You think, "I'm talking to myself..."
+- If you want to display the coords of the player who calls the command, you can now use [loc] to plug the coordinates of the player into the command. Example: I'm located at [loc]! OUTPUT: "I'm located at 34.5s, 54.2w!
+- _optional if `StaticText`_
 
 ##### Example:
 ```
