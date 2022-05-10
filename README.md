@@ -21,7 +21,7 @@ New Chat commands were added in v1.2 which allows you to load configs and set ch
 - /ch setchatcommand /f
 - /ch settab # NEW
 
-### Button Configuration File (.txt)
+### Controls Configuration File (.txt) _generally: `chaoshelper_config.txt`_
 
 ###### Important Note : columns represented by commas ','
 
@@ -102,7 +102,7 @@ etc..
 Use Digero's Ac Icon Browser to view all possible icons - http://decal.acasylum.com/icon_browser.php
 Right-click an icon to copy the Decimal value
 
-### Modifying/Creating the layout: (.layout)
+### Modifying/Creating the layout: (.layout) _generally `main.layout`_
 ```
 windowposition: 50, 50 < Default load location of window
 windowsize: 360, 200 < Sets the main tab size (if not set will default to 360, 200
