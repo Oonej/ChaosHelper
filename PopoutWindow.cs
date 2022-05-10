@@ -47,6 +47,11 @@ namespace ChaosHelper
             popoutTempLayout.AddControl(button, rect);
         }
 
+        public void AddStaticText(HudStaticText staticText, System.Drawing.Rectangle rect)
+        {
+            popoutTempLayout.AddControl(staticText, rect);
+        }
+
         public void AddButton(HudImageButton button, System.Drawing.Rectangle rect)
         {
             popoutTempLayout.AddControl(button, rect);
@@ -81,6 +86,14 @@ namespace ChaosHelper
         public void ChangeBtnInfo(string name, bool visibility, string btnText)
         {
             HudButton temp = (HudButton)popoutview[name];
+
+            temp.Visible = visibility;
+            temp.Text = btnText;
+        }
+
+        public void ChangeStaticTextInfo(string name, bool visibility, string btnText)
+        {
+            HudStaticText temp = (HudStaticText)popoutview[name];
 
             temp.Visible = visibility;
             temp.Text = btnText;

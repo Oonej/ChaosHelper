@@ -226,7 +226,7 @@ namespace ChaosHelper
 
             TabView.OpenTabChange += new EventHandler(TabChanged);
 
-            VersionLbl.Text = "Version 2.2.5.0";
+            VersionLbl.Text = "Version 2.2.6.0";
             ChatCommand.Text = chatLoc;
         }
 
@@ -252,102 +252,106 @@ namespace ChaosHelper
                 int button_count = 1;
                 startingW = 335;
                 startingH = 200;
-                foreach (string line in layout)
+                foreach (string _line in layout)
                 {
-                    string[] words = { "windowsize:", "buttonpadding:", "tab:", "cols:", "rows:", "button_" };
+                    string line = _line.Trim();
 
-                    string temp = "";
+                    // replace first colon (if exist) with whitespace (make it optional)
+                    int colonIndex = line.IndexOf(':');
+                    if (colonIndex != -1)
+                    {
+                        line = line.Remove(colonIndex, 1);
+                        line = line.Insert(colonIndex, " ");
+                    }
 
+                    // split directive out based on first whitespace
+                    int sepIndex = line.IndexOfAny(new char[] { ' ', '\t' });
+                    if (sepIndex == -1)
+                        continue;
+
+                    // isolate directive and content
+                    string directive = line.Substring(0, sepIndex).Trim();
+                    string content = line.Substring(sepIndex+1).Trim();
 
                     view.ClientArea = new System.Drawing.Size(startingW, startingH);
 
-                    if (line.Contains("windowposition:"))
+                    // for simple  [directive] [value]  lines  just compare a pre-lowercased version `simpleDirective`
+                    // for complex directives where values are introduced in the first string (eg. Button_01) then parse using `directive`
+                    string simpleDirective = directive.ToLowerInvariant();
+                    if (simpleDirective == "windowposition")
                     {
-                        temp = line.Remove(0, "windowposition:".Length);
-                        string[] split = temp.Split(',');
+                        string[] split = content.Split(',');
                         view.Location = new System.Drawing.Point(int.Parse(split[0]), int.Parse(split[1]));
                     }
-                    else if(line.Contains("windowsize:"))
+                    else if(simpleDirective == "windowsize")
                     {
-                        temp = line.Remove(0, "windowsize:".Length);
-                        string[] split = temp.Split(',');
-                        startingW = int.Parse(split[0]);
-                        startingH = int.Parse(split[1]);
-
-                        view.ClientArea = new System.Drawing.Size(startingW, startingW);
+                        string[] split = content.Split(',');
+                        view.ClientArea = new System.Drawing.Size(int.Parse(split[0]), int.Parse(split[1]));
 
                     }
-                    else if(line.Contains("windowstartopen:"))
+                    else if(simpleDirective == "windowstartopen")
                     {
-                        temp = line.Remove(0, "windowstartopen:".Length);
-                        view.Visible = bool.Parse(temp);
+                        view.Visible = bool.Parse(content);
                     }
-                    else if (line.Contains("buttonpadding:"))
+                    else if (simpleDirective == "buttonpadding")
                     {
-                        temp = line.Remove(0, words[1].Length);
-                        padding = int.Parse(temp.Trim());
+                        padding = int.Parse(content);
                     }
-                    else if (line.Contains("tab:"))
+                    else if (simpleDirective == "tab")
                     {
                         button_count = 1;
                         currentRow = 1;
                         currentCol = 1;
                         cols = 0;
                         rows = 0;
-                        temp = line.Remove(0, words[2].Length).Trim();
                         tempLayout = new HudFixedLayout();
 
                         tempPopoutwindow = new PopoutWindow();
 
-                        tempLayout.InternalName = temp;
-                        currentTab = temp;
+                        tempLayout.InternalName = content;
+                        currentTab = content;
 
-                        popoutWindows.Add(temp, tempPopoutwindow);
-                        TabView.AddTab(tempLayout, temp);
+                        popoutWindows.Add(content, tempPopoutwindow);
+                        TabView.AddTab(tempLayout, content);
                     }
-                    else if (line.Contains("tabvisible:"))
+                    else if (simpleDirective == "tabvisible")
                     {
-                        temp = line.Remove(0, "tabvisible:".Length);
-                        if(bool.Parse(temp))
+                        if(bool.Parse(content))
                         {
                             tempPopoutwindow.toggleVisibility();
                         }
                     }
-                    else if (line.Contains("tabsize:"))
+                    else if (simpleDirective == "tabsize")
                     {
-                        temp = line.Remove(0, "tabsize:".Length);
-                        string[] split = temp.Split(',');
+                        string[] split = content.Split(',');
                         width = int.Parse(split[0].Trim());
                         height = int.Parse(split[1].Trim());
 
                         sizes.Add(new System.Drawing.Size(width, height));
                         tempPopoutwindow.SetWindowSize(new System.Drawing.Size(width, height - 25));
                     }
-                    else if (line.Contains("tabposition:"))
+                    else if (simpleDirective == "tabposition")
                     {
-                        temp = line.Remove(0, "tabposition:".Length);
-                        string[] split = temp.Split(',');
+                        string[] split = content.Split(',');
                         int tabx = int.Parse(split[0].Trim());
                         int taby = int.Parse(split[1].Trim());
 
                         locations.Add(new System.Drawing.Point(tabx, taby));
                         tempPopoutwindow.SetWindowPos(new System.Drawing.Point(tabx, taby));
                     }
-                    else if (line.Contains("cols:"))
+                    else if (simpleDirective == "cols")
                     {
-                        temp = line.Remove(0, words[3].Length);
-                        cols = int.Parse(temp.Trim());
+                        cols = int.Parse(content.Trim());
                         buttonWidth = (int)((width - (padding * (1 + cols))) / cols);
                     }
-                    else if (line.Contains("rows:"))
+                    else if (simpleDirective == "rows")
                     {
-                        temp = line.Remove(0, words[4].Length);
-                        rows = int.Parse(temp.Trim());
+                        rows = int.Parse(content);
                         buttonHeight = (int)((height - (padding * (3 + rows))) / rows);
                     }
-                    else if (line.Contains("Button"))
+                    else if (directive.IndexOf("Button", StringComparison.InvariantCultureIgnoreCase) != -1)
                     {
-                        int span = int.Parse(line.Remove(0, words[5].Length + 3).Trim());
+                        int span = int.Parse(content);
 
                         //Creates Button
                         HudButton tempBtn = new HudButton();
@@ -366,6 +370,39 @@ namespace ChaosHelper
                         
                         tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
                         popoutWindows[currentTab].AddButton(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+
+                        currentCol += span;
+                        if (currentCol > cols)
+                        {
+                            currentCol = 1;
+                            currentRow++;
+                        }
+
+                        button_count++;
+                    }
+                    else if (directive.IndexOf("StaticText", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    {
+                        int span = int.Parse(content);
+
+                        //Creates Button
+                        HudStaticText tempBtn = new HudStaticText();
+                        HudStaticText tempPopBtn = new HudStaticText();
+
+                        tempBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
+                        tempPopBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
+
+                        tempBtn.Text = currentTab + "_" + button_count.ToString("D2");
+                        tempBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
+                        tempPopBtn.Text = currentTab + "_" + button_count.ToString("D2");
+                        tempPopBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
+
+                        int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
+                        int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
+                        int btnW = (buttonWidth * span) + (padding * (span - 1));
+                        int btnH = buttonHeight;
+
+                        tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                        popoutWindows[currentTab].AddStaticText(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
 
                         currentCol += span;
                         if (currentCol > cols)
@@ -510,7 +547,7 @@ namespace ChaosHelper
                                         }
 
                                         temp.Visible = true;
-                                        
+
                                         //Creates the event handler for each button
 
                                         if(col[2].Contains("[player]"))
@@ -640,7 +677,32 @@ namespace ChaosHelper
 
                                     }
                                 }
-                            }                            
+                            } else if (view[col[0]].GetType() == typeof(HudStaticText))
+                            {
+                                HudStaticText temp = (HudStaticText)view[col[0]];
+
+                                string currentTabName = col[0].Substring(0, col[0].IndexOf('_'));
+                                //check if button exists
+                                if (temp != null)
+                                {
+                                    //Check if button should be set to visible
+                                    if (col[1].Contains("NOTSET"))
+                                    {
+                                        temp.Visible = false;
+                                        popoutWindows[currentTabName].ChangeStaticTextInfo(col[0], false, "");
+                                    }
+                                    //If button is an image button
+
+                                    // Register the button event handler and make visible
+                                    else
+                                    {
+                                        temp.Text = col[1];
+                                        popoutWindows[currentTabName].ChangeStaticTextInfo(col[0], true, col[1]);
+
+                                        temp.Visible = true;
+                                    }
+                                }
+                            }
                         }
                     }
                     catch(Exception ex)
