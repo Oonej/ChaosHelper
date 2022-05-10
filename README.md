@@ -33,7 +33,7 @@ _ex:_ `LAYOUT: main.layout`
 
 _ex:_ `Adv_Button_01,Loot Rares,!loot rares`
 
-##### First Column : this is how the script knows which controls to set to what. `<TabName>_<ControlName>_##`
+##### First Column : this is how the script knows which controls to set to what. `<TabName>_<ControlType>_##`
 
 _ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
 
@@ -42,11 +42,11 @@ _ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
 - `Adv`
 - _any of your custom tabs as defined in your `.layout` file_
   
-###### `<ControlName>` should be replaced with:
+###### `<ControlType>` should be replaced with:
   - `Button` - a clickable button which issues a command
   - `StaticText` - a text label
 
-###### `##` should be replaced with `01` and incrementing for each control you add.
+###### Instance `##` should be replaced with `01` and incrementing for each control you add.
   
 ##### Second column : This is the text of the control. Set it how ever you wish!
 
