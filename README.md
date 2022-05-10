@@ -15,25 +15,27 @@ to customize the view, modify `main.layout` or create a new one. Be sure to spec
 A new button was added in v1.2 which allows you to save your defaults. Go to the ? tab and press the save defaults button to save any changes you've made.
 
 New Chat commands were added in v1.2 which allows you to load configs and set chat command through the chat window / metas / etc.
-### Chat Commands:
+## Chat Commands:
 - /ch help
 - /ch setprofile profileName.txt
 - /ch setchatcommand /f
-- /ch settab # NEW
+- /ch settab
 
-### Controls Configuration File (.txt) _generally: `chaoshelper_config.txt`_
+## UI Controls Configuration File (_default: `chaoshelper_config.txt`_)
 
 ###### Important Note : columns represented by commas ','
 
-#### First Line : This is the layout that will be associated with the controls layout. Every config needs a layout!
+### First Line : This is the layout that will be associated with the controls layout. Every config needs a layout!
 
 _ex:_ `LAYOUT: main.layout`
 
-#### All Other Lines : These define custom properties for your controls. Each entry needs 2-3 columns!
+### All Other Lines : These define custom properties for your controls. Each entry needs 2-3 columns!
 
 _ex:_ `Adv_Button_01,Loot Rares,!loot rares`
 
-##### First Column : this is how the script knows which controls to set to what. `<TabName>_<ControlType>_##`
+_ex:_ `Basic_StaticText_08,Combat Section` # NEW
+
+#### First Column : this is how the script knows which controls to set to what. `<TabName>_<ControlType>_##`
 
 _ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
 
@@ -48,14 +50,14 @@ _ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
 
 ###### Instance `##` should be replaced with `01` and incrementing for each control you add.
   
-##### Second column : This is the text of the control. Set it how ever you wish!
+#### Second column : This is the text of the control. Set it how ever you wish!
 
 _ex:_ _Adv\_Button\_01,_**Loot Rares**_,!loot rares_
   
 - If you wish for the control to be not visible, set the text to be NOTSET and it will hide from the screen.  
 - If you want a control to have an icon, add the icon value (Decimal! NOT Hex!) in brackets Example: [12345]
   
-##### Third column : This is the command that will be sent to the chat
+#### Third column : This is the command that will be sent to the chat
 
 _ex:_ _Adv\_Button\_01,Loot Rares,_**!loot rares**
   
@@ -63,7 +65,7 @@ _ex:_ _Adv\_Button\_01,Loot Rares,_**!loot rares**
 - If you want this to run a /command, just add the /command here. Be sure not to add more than one comma as it may bug it out. For instance: /tell Invisible Fire, boom! will work, but /tell invisible fire, hi, there! will not!  
 - If you want this meta to only apply to the player calling the command, you can now use [player] to plug the player name into the command. EXAMPLE: /tell [player], I'm talking to myself... OUTPUT: "You think, "I'm talking to myself..."
 - If you want to display the coords of the player who calls the command, you can now use [loc] to plug the coordinates of the player into the command. Example: I'm located at [loc]! OUTPUT: "I'm located at 34.5s, 54.2w!
-- _optional if `StaticText`_
+- _optional if `StaticText`_ # NEW
 
 ##### Example:
 ```
@@ -102,7 +104,7 @@ etc..
 Use Digero's Ac Icon Browser to view all possible icons - http://decal.acasylum.com/icon_browser.php
 Right-click an icon to copy the Decimal value
 
-### Modifying/Creating the layout: (.layout) _generally `main.layout`_
+## UI Layout Configuration File (_default: `main.layout`_)
 ```
 windowposition: 50, 50 < Default load location of window
 windowsize: 360, 200 < Sets the main tab size (if not set will default to 360, 200
@@ -118,6 +120,7 @@ Button_01: 2 < Span value for button 1 (make it span 2 columns)
 Button_02: 1 < Span value for button 2 (make it only span 1 column)
 Button_03: 1 < MORE BUTTONS!!! ARGH
 Button_04: 1
+StaticText_05: 2 < Can create labels in the same way! # NEW
 tab: Adv < Tab Name for the second tab
 tabvisible: false < Sets if the tab should start visible or not (true or false)
 tabsize: 340, 350 < Size of the tab and the popout window
@@ -129,15 +132,17 @@ Button_02: 1
 etc.
 ```
 
-### Known Issues:
+## Known Issues:
 None at the moment. Please leave feed back so I can properly fix known issues! Thanks :D
 
-### Upcoming Features:
+## Upcoming Features:
 Possibly allow the ability to load custom images instead of AC Icons... if I get a big enough request, I will do this.
 
-### Change Notes:
+## Change Notes:
 ```
-V2.2.5 NEW
+V2.2.6 # NEW
+Added new "StaticText" .layout/.txt field entry type for labels
+V2.2.5
 Added new chat command /ch settab # to auto switch to a tab via command.
 V2.2.4
 Added "windowsize:" option to layout files. This will adjust the main tab (?) size to prevent large layouts from breaking.
