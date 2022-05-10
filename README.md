@@ -8,9 +8,9 @@ To use this plugin, add the files in the zip to the same directory of your choic
 
 To change where you wish the chat text to go, aka /f, /a, etc... modify Chat command: text box and press the 'set' button..
 
-To customize this plugin modify the chaoshelper_config.txt, or any loaded config file. (you can do this while in game, and reload after you save your changes by going to the ? tab and pressing Load button).
+To customize this plugin modify the `chaoshelper_config.txt`, or any loaded config file. (you can do this while in game, and reload after you save your changes by going to the ? tab and pressing Load button).
 
-to customize the view, modify main.layout or create a new one. Be sure to specify the layout in the top of the config file as it appears in the default file this plugin comes with. Examples Below
+to customize the view, modify `main.layout` or create a new one. Be sure to specify the layout in the top of the config file as it appears in the default file this plugin comes with. Examples Below
 
 A new button was added in v1.2 which allows you to save your defaults. Go to the ? tab and press the save defaults button to save any changes you've made.
 
