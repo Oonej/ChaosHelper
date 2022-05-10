@@ -19,7 +19,7 @@ New Chat commands were added in v1.2 which allows you to load configs and set ch
 - /ch help
 - /ch setprofile profileName.txt
 - /ch setchatcommand /f
-- /ch settab
+- /ch settab #
 
 ## UI Controls Configuration File (_default: `chaoshelper_config.txt`_)
 
@@ -33,11 +33,15 @@ _ex:_ `LAYOUT: main.layout`
 
 _ex:_ `Adv_Button_01,Loot Rares,!loot rares`
 
-_ex:_ `Basic_StaticText_08,Combat Section` # NEW
+_ex:_ `Basic_StaticText_08,Combat Section` _**(NEW)**_
 
-#### First Column : this is how the script knows which controls to set to what. `<TabName>_<ControlType>_##`
+##### The columns are broken-down here:
+
+#### (1) FIRST COLUMN: this is how the script knows which controls to set to what.
 
 _ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
+
+##### Follows the format: `<TabName>_<ControlType>_<##>`
 
 ###### `<TabName>` should be replaced with:
 - `Basic`
@@ -46,18 +50,19 @@ _ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
   
 ###### `<ControlType>` should be replaced with:
   - `Button` - a clickable button which issues a command
-  - `StaticText` - a text label
+  - `StaticText` - a text label _**(NEW)**_
 
-###### Instance `##` should be replaced with `01` and incrementing for each control you add.
+###### `<##>` instance should be replaced with:
+  - `01` and incrementing for each control you add
   
-#### Second column : This is the text of the control. Set it how ever you wish!
+#### (2) SECOND COLUMN: This is the text of the control. Set it how ever you wish!
 
 _ex:_ _Adv\_Button\_01,_**Loot Rares**_,!loot rares_
   
 - If you wish for the control to be not visible, set the text to be NOTSET and it will hide from the screen.  
 - If you want a control to have an icon, add the icon value (Decimal! NOT Hex!) in brackets Example: [12345]
   
-#### Third column : This is the command that will be sent to the chat
+#### (3) THIRD COLUMN: This is the command that will be sent to the chat
 
 _ex:_ _Adv\_Button\_01,Loot Rares,_**!loot rares**
   
@@ -65,7 +70,7 @@ _ex:_ _Adv\_Button\_01,Loot Rares,_**!loot rares**
 - If you want this to run a /command, just add the /command here. Be sure not to add more than one comma as it may bug it out. For instance: /tell Invisible Fire, boom! will work, but /tell invisible fire, hi, there! will not!  
 - If you want this meta to only apply to the player calling the command, you can now use [player] to plug the player name into the command. EXAMPLE: /tell [player], I'm talking to myself... OUTPUT: "You think, "I'm talking to myself..."
 - If you want to display the coords of the player who calls the command, you can now use [loc] to plug the coordinates of the player into the command. Example: I'm located at [loc]! OUTPUT: "I'm located at 34.5s, 54.2w!
-- _optional if `StaticText`_ # NEW
+- _optional if `StaticText`_ _**(NEW)**_
 
 ##### Example:
 ```
@@ -120,7 +125,7 @@ Button_01: 2 < Span value for button 1 (make it span 2 columns)
 Button_02: 1 < Span value for button 2 (make it only span 1 column)
 Button_03: 1 < MORE BUTTONS!!! ARGH
 Button_04: 1
-StaticText_05: 2 < Can create labels in the same way! # NEW
+StaticText_05: 2 < Can create labels in the same way! (NEW)
 tab: Adv < Tab Name for the second tab
 tabvisible: false < Sets if the tab should start visible or not (true or false)
 tabsize: 340, 350 < Size of the tab and the popout window
@@ -140,8 +145,8 @@ Possibly allow the ability to load custom images instead of AC Icons... if I get
 
 ## Change Notes:
 ```
-V2.2.6 # NEW
-Added new "StaticText" .layout/.txt field entry type for labels
+V2.2.6 (NEW)
+Added support for "StaticText" .layout/.txt field type for custom labels.
 V2.2.5
 Added new chat command /ch settab # to auto switch to a tab via command.
 V2.2.4
