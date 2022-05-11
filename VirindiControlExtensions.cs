@@ -26,6 +26,9 @@ namespace ChaosHelper
 
             private void ChaosHudButton_Hit(object sender, EventArgs e)
             {
+                if (string.IsNullOrEmpty(Command))
+                    return;
+
                 PluginCore.DispatchChatToBoxWithPluginIntercept(Command);
             }
         }
@@ -47,6 +50,9 @@ namespace ChaosHelper
 
             private void ChaosHudButton_Hit(object sender, EventArgs e)
             {
+                if (string.IsNullOrEmpty(Command))
+                    return;
+
                 PluginCore.DispatchChatToBoxWithPluginIntercept(Command);
             }
         }
@@ -71,10 +77,16 @@ namespace ChaosHelper
 
             private void ChaosHudCheckBox_Change(object sender, EventArgs e)
             {
-                if(Checked)
-                    PluginCore.DispatchChatToBoxWithPluginIntercept(OnCommand);
+                if (Checked)
+                {
+                    if(!string.IsNullOrEmpty(OnCommand))
+                        PluginCore.DispatchChatToBoxWithPluginIntercept(OnCommand);
+                }
                 else
-                    PluginCore.DispatchChatToBoxWithPluginIntercept(OffCommand);
+                {
+                    if(!string.IsNullOrEmpty(OffCommand))
+                        PluginCore.DispatchChatToBoxWithPluginIntercept(OffCommand);
+                }
             }
         }
 
