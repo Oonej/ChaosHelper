@@ -9,8 +9,8 @@ Emotes_Button_06,YMCA,/say *ymca*
 Emotes_Button_07,atoyot,/say *atoyot*
 
 Basic_Button_01,Test Tell LOL,/tell [player], I'm talking to myself
-Basic_Button_02,Combat On,!combat on 
-Basic_Button_03,Combat Off,!combat off 
+
+Basic_Button_03,NOTSET,!command
 Basic_Button_04,Buff On,!buff on 
 Basic_Button_05,Buff Off,!buff off 
 Basic_Button_06,Nav On,!nav on 

@@ -397,6 +397,8 @@ namespace ChaosHelper
                             //Creates Button
                             ChaosHudButton tempBtn = new ChaosHudButton(defText, defCommand, defParam);
                             ChaosHudButton tempPopBtn = new ChaosHudButton(defText, defCommand, defParam);
+                            tempBtn.MirrorButton = tempPopBtn;
+                            tempPopBtn.MirrorButton = tempBtn;
 
                             tempBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
                             tempPopBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
@@ -408,7 +410,7 @@ namespace ChaosHelper
 
 
                             tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                            popoutWindows[currentTab].AddButton(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            popoutWindows[currentTab].AddControl(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
 
                             currentCol += span;
                             if (currentCol > cols)
@@ -432,6 +434,8 @@ namespace ChaosHelper
                             //Creates Button
                             ChaosHudStaticText tempBtn = new ChaosHudStaticText(defText);
                             ChaosHudStaticText tempPopBtn = new ChaosHudStaticText(defText);
+                            tempBtn.MirrorStaticText = tempPopBtn;
+                            tempPopBtn.MirrorStaticText = tempBtn;
 
                             tempBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
                             tempPopBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
@@ -445,7 +449,51 @@ namespace ChaosHelper
                             int btnH = buttonHeight;
 
                             tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                            popoutWindows[currentTab].AddStaticText(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            popoutWindows[currentTab].AddControl(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+
+                            currentCol += span;
+                            if (currentCol > cols)
+                            {
+                                currentCol = 1;
+                                currentRow++;
+                            }
+
+                            button_count++;
+                        } else if (directive.IndexOf("CheckBox", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+                            string defText = null;
+                            string defCommandOn = null;
+                            string defCommandOff = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            if (datCols.Count > 1)
+                                defCommandOn = datCols[1];
+
+                            if (datCols.Count > 2)
+                                defCommandOff = datCols[2];
+
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
+                            //Creates Button
+                            ChaosHudCheckBox tempBtn = new ChaosHudCheckBox(defText, defCommandOn, defCommandOff);
+                            ChaosHudCheckBox tempPopBtn = new ChaosHudCheckBox(defText, defCommandOn, defCommandOff);
+                            tempBtn.MirrorCheckBox = tempPopBtn;
+                            tempPopBtn.MirrorCheckBox = tempBtn;
+
+                            tempBtn.InternalName = currentTab + "_CheckBox_" + button_count.ToString("D2");
+                            tempPopBtn.InternalName = currentTab + "_CheckBox_" + button_count.ToString("D2");
+
+                            int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
+                            int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
+                            int btnW = (buttonWidth * span) + (padding * (span - 1));
+                            int btnH = buttonHeight;
+
+
+                            tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            popoutWindows[currentTab].AddControl(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
 
                             currentCol += span;
                             if (currentCol > cols)

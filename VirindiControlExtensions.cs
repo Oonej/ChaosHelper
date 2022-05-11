@@ -9,14 +9,20 @@ namespace ChaosHelper
     {
         public interface IChaosHudControl
         {
+            HudControl HudControl { get; }
+            IChaosHudControl Mirror { get; }
             bool Visible { get; set; }
             string Text { get; set; }
         }
 
         public class ChaosHudButton : HudButton, IChaosHudControl
         {
+            public HudControl HudControl { get { return this; } }
             public string Command;
             public string Param;
+
+            public ChaosHudButton MirrorButton = null;
+            public IChaosHudControl Mirror { get { return MirrorButton; } }
 
             public ChaosHudButton(string _Text, string _Command, string _Param)
             {
@@ -35,8 +41,12 @@ namespace ChaosHelper
 
         public class ChaosHudImageButton : HudImageButton, IChaosHudControl
         {
+            public HudControl HudControl { get { return this; } }
             public string Command;
             public string Param;
+
+            public ChaosHudImageButton MirrorImageButton = null;
+            public IChaosHudControl Mirror { get { return MirrorImageButton; } }
 
             public ChaosHudImageButton(string _Command, string _Param)
             {
@@ -58,6 +68,11 @@ namespace ChaosHelper
 
         public class ChaosHudStaticText : HudStaticText, IChaosHudControl
         {
+            public HudControl HudControl { get { return this; } }
+
+            public ChaosHudStaticText MirrorStaticText = null;
+            public IChaosHudControl Mirror { get { return MirrorStaticText; } }
+
             public ChaosHudStaticText(string _Text)
             {
                 Text = _Text;
@@ -66,19 +81,28 @@ namespace ChaosHelper
 
         public class ChaosHudCheckBox : HudCheckBox, IChaosHudControl
         {
+            public HudControl HudControl { get { return this; } }
             public string OnCommand;
             public string OffCommand;
 
-            public ChaosHudCheckBox(string _OnCommand, string _OffCommand)
+            public ChaosHudCheckBox MirrorCheckBox = null;
+            public IChaosHudControl Mirror { get { return MirrorCheckBox; } }
+
+            public ChaosHudCheckBox(string _Text, string _OnCommand, string _OffCommand)
             {
+                Text = _Text;
                 OnCommand = _OnCommand;
                 OffCommand = _OffCommand;
 
                 Change += ChaosHudCheckBox_Change;
             }
 
+            private bool IgnoreChange = false;
             private void ChaosHudCheckBox_Change(object sender, EventArgs e)
             {
+                if (IgnoreChange)
+                    return;
+
                 if (Checked)
                 {
                     PluginCore.DispatchCommand(OnCommand, null);
@@ -86,6 +110,15 @@ namespace ChaosHelper
                 else
                 {
                     PluginCore.DispatchCommand(OffCommand, null);
+                }
+
+                
+                // update our mirror, but without dispatching a duplicate command
+                if(MirrorCheckBox != null)
+                {
+                    MirrorCheckBox.IgnoreChange = true;
+                    MirrorCheckBox.Checked = Checked;
+                    MirrorCheckBox.IgnoreChange = false;
                 }
             }
         }

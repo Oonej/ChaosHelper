@@ -41,19 +41,9 @@ namespace ChaosHelper
                 thisCheckBox.Checked = false;
         }
 
-        public void AddButton(ChaosHudButton button, System.Drawing.Rectangle rect)
+        public void AddControl(IChaosHudControl ctrl, System.Drawing.Rectangle rect)
         {
-            popoutTempLayout.AddControl(button, rect);
-        }
-
-        public void AddStaticText(ChaosHudStaticText staticText, System.Drawing.Rectangle rect)
-        {
-            popoutTempLayout.AddControl(staticText, rect);
-        }
-
-        public void AddButton(ChaosHudImageButton button, System.Drawing.Rectangle rect)
-        {
-            popoutTempLayout.AddControl(button, rect);
+            popoutTempLayout.AddControl(ctrl.HudControl, rect);
         }
 
         public void SetImage(string name, VirindiViewService.ACImage image)
