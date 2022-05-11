@@ -32,13 +32,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Decal.Adapter">
-      <HintPath>..\..\Program Files\Asheron's Call\Decal\Decal.Adapter.dll</HintPath>
+      <HintPath>..\Program Files (x86)\Decal 3.0\Decal.Adapter.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="VirindiViewService">
-      <HintPath>..\..\Program Files\Asheron's Call\Decal\Virindi Plugin\VirindiViewService\VirindiViewService.dll</HintPath>
+      <HintPath>..\Games\VirindiPlugins\VirindiViewService\VirindiViewService.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
