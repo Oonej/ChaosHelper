@@ -451,23 +451,47 @@ namespace ChaosHelper
             string[] configInfo = Util.GetConfig(configName.Trim());
             if(configInfo != null)
             {
-                foreach(string line in configInfo)
+                foreach(string _line in configInfo)
                 {
+                    string line = _line.Trim();
+
                     try
                     {
-                        if(line.Contains("LAYOUT:"))
-                        {                       
-                            string layoutTemp = line.Remove(0, "LAYOUT:".Length).Trim();
-                            GenerateLayout(layoutTemp);
+                        if(line.StartsWith("LAYOUT:", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            string[] parts = line.Split(':');
+                            if (parts.Length < 2)
+                                continue;
+
+                            GenerateLayout(parts[1].Trim());
                         }
                         else
                         {
                             string[] col = line.Split(',');
-                            if(view[col[0]].GetType() == typeof(HudButton))
-                            {
-                                HudButton temp = (HudButton)view[col[0]];
+                            
+                            // perhaps we have a single-column control declaration like a break/spacer;  so make a "fake" array with just the control name
+                            if (col.Length == 0)
+                                col = new string[] { line };
 
-                                string currentTabName = col[0].Substring(0, col[0].IndexOf('_'));
+
+                            // isolate control name and control object
+                            string ctrlName = col[0];
+                            HudControl ctrl;
+                            try
+                            {
+                                ctrl = view[ctrlName];
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+
+
+                            if(ctrl is HudButton)
+                            {
+                                HudButton temp = (HudButton)ctrl;
+
+                                string currentTabName = ctrlName.Substring(0, ctrlName.IndexOf('_'));
                                 //check if button exists
                                 if (temp != null)
                                 {
@@ -475,7 +499,7 @@ namespace ChaosHelper
                                     if (col[1].Contains("NOTSET"))
                                     {
                                         temp.Visible = false;
-                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], false, "");
+                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, false, "");
                                     }
                                     //If button is an image button
                                     
@@ -498,8 +522,8 @@ namespace ChaosHelper
                                                 iconImage = int.Parse(clean);
 
                                                 VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
-                                                popoutWindows[currentTabName].SetImage(col[0], tempImage);
-                                                popoutWindows[currentTabName].ChangeControlInfo(col[0], true, "");
+                                                popoutWindows[currentTabName].SetImage(ctrlName, tempImage);
+                                                popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, "");
                                                 temp.Image = tempImage;
                                                 temp.Text = "";
                                             }
@@ -512,8 +536,8 @@ namespace ChaosHelper
                                                 {
                                                     if(int.TryParse(imageSettings[1], out iconBG))
                                                     {
-                                                        popoutWindows[currentTabName].SetImage(col[0], new VirindiViewService.ACImage(iconImage));
-                                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], true, "");
+                                                        popoutWindows[currentTabName].SetImage(ctrlName, new VirindiViewService.ACImage(iconImage));
+                                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, "");
 
                                                         temp.Image = new VirindiViewService.ACImage(iconImage); 
                                                         temp.Image = new VirindiViewService.ACImage(iconBG);
@@ -527,8 +551,8 @@ namespace ChaosHelper
                                                     else
                                                     {
                                                         VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
-                                                        popoutWindows[currentTabName].SetImage(col[0], tempImage);
-                                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], true, imageSettings[1]);
+                                                        popoutWindows[currentTabName].SetImage(ctrlName, tempImage);
+                                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, imageSettings[1]);
                                                         temp.Image = tempImage;
                                                         if(imageSettings.Length == 2)
                                                         {
@@ -543,7 +567,7 @@ namespace ChaosHelper
                                         else
                                         {
                                             temp.Text = col[1];
-                                            popoutWindows[currentTabName].ChangeControlInfo(col[0], true, col[1]);
+                                            popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, col[1]);
                                         }
 
                                         temp.Visible = true;
@@ -570,20 +594,20 @@ namespace ChaosHelper
                                                 EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2] + "," + col[3]));
                                                 EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2] + "," + col[3]));
 
-                                                popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
+                                                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
 
-                                                if (regEvents.ContainsKey(col[0]))
+                                                if (regEvents.ContainsKey(ctrlName))
                                                 {
                                                     //Unregister the event handler
-                                                    temp.Hit -= regEvents[col[0]];
+                                                    temp.Hit -= regEvents[ctrlName];
 
                                                     //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[col[0]] = newEvent;
+                                                    regEvents[ctrlName] = newEvent;
                                                 }
                                                 else
                                                 {
                                                     //Replace the event
-                                                    regEvents[col[0]] = newEvent;
+                                                    regEvents[ctrlName] = newEvent;
                                                 }
 
                                                 //Register the event
@@ -596,21 +620,21 @@ namespace ChaosHelper
                                                 EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2]));
                                                 EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2]));
 
-                                                popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
+                                                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
 
-                                                if (regEvents.ContainsKey(col[0]))
+                                                if (regEvents.ContainsKey(ctrlName))
                                                 {
                                                     //Unregister the event handler
-                                                    temp.Hit -= regEvents[col[0]];
+                                                    temp.Hit -= regEvents[ctrlName];
 
                                                     //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[col[0]] = newEvent;
+                                                    regEvents[ctrlName] = newEvent;
                                                 }
 
                                                 else
                                                 {
                                                     //Replace the event
-                                                    regEvents[col[0]] = newEvent;
+                                                    regEvents[ctrlName] = newEvent;
                                                 }
 
                                                 //Register the event
@@ -622,21 +646,21 @@ namespace ChaosHelper
                                                 EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
                                                 EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
 
-                                                popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
+                                                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
 
-                                                if (regEvents.ContainsKey(col[0]))
+                                                if (regEvents.ContainsKey(ctrlName))
                                                 {
                                                     //Unregister the event handler
-                                                    temp.Hit -= regEvents[col[0]];
+                                                    temp.Hit -= regEvents[ctrlName];
 
                                                     //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[col[0]] = newEvent;
+                                                    regEvents[ctrlName] = newEvent;
                                                 }
 
                                                 else
                                                 {
                                                     //Replace the event
-                                                    regEvents[col[0]] = newEvent;
+                                                    regEvents[ctrlName] = newEvent;
                                                 }
 
                                                 //Register the event
@@ -651,21 +675,21 @@ namespace ChaosHelper
                                             EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
                                             EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
 
-                                            popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
+                                            popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
 
-                                            if (regEvents.ContainsKey(col[0]))
+                                            if (regEvents.ContainsKey(ctrlName))
                                             {
                                                 //Unregister the event handler
-                                                temp.Hit -= regEvents[col[0]];
+                                                temp.Hit -= regEvents[ctrlName];
 
                                                 //Store the event inside the dictionary so we can unregister it later
-                                                regEvents[col[0]] = newEvent;
+                                                regEvents[ctrlName] = newEvent;
                                             }
 
                                             else
                                             {
                                                 //Replace the event
-                                                regEvents[col[0]] = newEvent;
+                                                regEvents[ctrlName] = newEvent;
                                             }
 
                                             //Register the event
@@ -677,11 +701,11 @@ namespace ChaosHelper
 
                                     }
                                 }
-                            } else if (view[col[0]].GetType() == typeof(HudStaticText))
+                            } else if (ctrl is HudStaticText)
                             {
-                                HudStaticText temp = (HudStaticText)view[col[0]];
+                                HudStaticText temp = (HudStaticText)ctrl;
 
-                                string currentTabName = col[0].Substring(0, col[0].IndexOf('_'));
+                                string currentTabName = ctrlName.Substring(0, ctrlName.IndexOf('_'));
                                 //check if button exists
                                 if (temp != null)
                                 {
@@ -689,7 +713,7 @@ namespace ChaosHelper
                                     if (col[1].Contains("NOTSET"))
                                     {
                                         temp.Visible = false;
-                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], false, "");
+                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, false, "");
                                     }
                                     //If button is an image button
 
@@ -697,7 +721,7 @@ namespace ChaosHelper
                                     else
                                     {
                                         temp.Text = col[1];
-                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], true, col[1]);
+                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, col[1]);
 
                                         temp.Visible = true;
                                     }
