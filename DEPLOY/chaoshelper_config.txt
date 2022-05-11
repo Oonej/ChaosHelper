@@ -1,5 +1,14 @@
 LAYOUT: main.layout
-Basic_Button_01,Follow Me,!followme 
+
+Emotes_Button_01,Hearty Laugh,/say *heartylaugh*
+Emotes_Button_02,Kneel,/say *kneel*
+Emotes_Button_03,Salute,/say *salute*
+Emotes_Button_04,Surrender,/say *surrender*
+Emotes_Button_05,Cheer,/say *cheer*
+Emotes_Button_06,YMCA,/say *ymca*
+Emotes_Button_07,atoyot,/say *atoyot*
+
+Basic_Button_01,Test Tell LOL,/tell [player], I'm talking to myself
 Basic_Button_02,Combat On,!combat on 
 Basic_Button_03,Combat Off,!combat off 
 Basic_Button_04,Buff On,!buff on 
@@ -13,6 +22,7 @@ Basic_Button_11,Clear,!clear
 Basic_Button_12,Force Buff,!forcebuff 
 Basic_Button_13,Cancel Buff,!cancelbuff 
 Basic_StaticText_14,Just a label
+
 Adv_Button_01,Loot Rares,!loot rares 
 Adv_Button_02,Loot All,!loot all 
 Adv_Button_03,Jiggle On,!jiggle on 
@@ -27,6 +37,7 @@ Adv_Button_11,Corners On,!corners on
 Adv_Button_12,Corners Off,!corners off 
 Adv_Button_13,NOTSET,!command 
 Adv_Button_14,NOTSET,!command 
+
 Ports_Button_01,Use Portal,!portal 
 Ports_Button_02,[9561],!prim
 Ports_Button_03,[9562],!sec 
@@ -52,6 +63,7 @@ Ports_Button_22,[9441],!ls
 Ports_Button_23,[8588],!ah 
 Ports_Button_24,[8590],!hom 
 Ports_Button_25,[8383],!hr 
+
 Atk_Button_01,Atk Low,!attklow 
 Atk_Button_02,Atk Mid,!attkmed 
 Atk_Button_03,Atk High,!attkhigh 
@@ -61,6 +73,7 @@ Atk_Button_06,Atk Range 15,!rangemed
 Atk_Button_07,Atk Range 30,!rangehigh 
 Atk_Button_08,Atk Range 60,!rangemax 
 Atk_Button_09,NOTSET,!command 
+
 Rngs_Button_01,Approach Low,!approachlow 
 Rngs_Button_02,Follow Low,!frangelow 
 Rngs_Button_03,Approach Med,!approachmed 
@@ -75,6 +88,7 @@ Rngs_Button_11,NOTSET,!command
 Rngs_Button_12,NOTSET,!command 
 Rngs_Button_13,NOTSET,!command 
 Rngs_Button_14,NOTSET,!command 
+
 Jump_Button_01,Forward 100,!fjump100	 
 Jump_Button_02,NOTSET,!command 
 Jump_Button_03,NOTSET,!command 
@@ -130,6 +144,7 @@ Jump_Button_52,NOTSET,!command
 Jump_Button_53,NOTSET,!command 
 Jump_Button_54,NOTSET,!command 
 Jump_Button_55,Shift 25,!sjump25 
+
 Misc_Button_01,Use Npc,!npc 
 Misc_Button_02,Use Vendor,!vendor 
 Misc_Button_03,/MP,!mp 

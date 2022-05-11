@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using VirindiViewService.Controls;
+using ChaosHelper.VirindiControlExtensions;
 
 namespace ChaosHelper
 {
@@ -42,65 +43,65 @@ namespace ChaosHelper
                 thisCheckBox.Checked = false;
         }
 
-        public void AddButton(HudButton button, System.Drawing.Rectangle rect)
+        public void AddButton(ChaosHudButton button, System.Drawing.Rectangle rect)
         {
             popoutTempLayout.AddControl(button, rect);
         }
 
-        public void AddStaticText(HudStaticText staticText, System.Drawing.Rectangle rect)
+        public void AddStaticText(ChaosHudStaticText staticText, System.Drawing.Rectangle rect)
         {
             popoutTempLayout.AddControl(staticText, rect);
         }
 
-        public void AddButton(HudImageButton button, System.Drawing.Rectangle rect)
+        public void AddButton(ChaosHudImageButton button, System.Drawing.Rectangle rect)
         {
             popoutTempLayout.AddControl(button, rect);
         }
 
         public void SetEvent(string name, EventHandler e)
         {
-                HudButton temp = (HudButton)popoutview[name];
+            ChaosHudButton temp = popoutview[name] as ChaosHudButton;
 
-                if (regEvents.ContainsKey(name))
-                {
-                    //Unregister the event handler
-                    temp.Hit -= regEvents[name];
-                    //Store the event inside the dictionary so we can unregister it later
-                    regEvents[name] = e;
-                }
-                else
-                {
-                    //Replace the event
-                    regEvents[name] = e;
-                }
+            if (regEvents.ContainsKey(name))
+            {
+                //Unregister the event handler
+                temp.Hit -= regEvents[name];
+                //Store the event inside the dictionary so we can unregister it later
+                regEvents[name] = e;
+            }
+            else
+            {
+                //Replace the event
+                regEvents[name] = e;
+            }
 
-                temp.Hit += e;            
+            temp.Hit += e;            
         }
 
         public void SetImage(string name, VirindiViewService.ACImage image)
         {
-            HudControl ctrl = popoutview[name];
+            IChaosHudControl ctrl = popoutview[name] as IChaosHudControl;
             if (ctrl == null)
                 return;
 
-            if(ctrl is HudButton)
-                (ctrl as HudButton).Image = image;
+            if(ctrl is ChaosHudButton)
+                (ctrl as ChaosHudButton).Image = image;
         }
 
         public void ChangeControlInfo(string name, bool visibility, string text)
         {
-            HudControl ctrl = popoutview[name];
+            IChaosHudControl ctrl = popoutview[name] as IChaosHudControl;
             if (ctrl == null)
                 return;
 
             ctrl.Visible = visibility;
 
-            if (ctrl is HudButton)
-                (ctrl as HudButton).Text = text;
-            else if (ctrl is HudStaticText)
-                (ctrl as HudStaticText).Text = text;
-            else if (ctrl is HudCheckBox)
-                (ctrl as HudCheckBox).Text = text;
+            if (ctrl is ChaosHudButton)
+                (ctrl as ChaosHudButton).Text = text;
+            else if (ctrl is ChaosHudStaticText)
+                (ctrl as ChaosHudStaticText).Text = text;
+            else if (ctrl is ChaosHudCheckBox)
+                (ctrl as ChaosHudCheckBox).Text = text;
         }
         
         public void SetWindowSize(System.Drawing.Size windowsize)

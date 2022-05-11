@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Text.RegularExpressions;
 
+using ChaosHelper.VirindiControlExtensions;
+
 /*
  * Created by Mag-nus. 8/19/2011, VVS added by Virindi-Inquisitor.
  * 
@@ -283,13 +285,13 @@ namespace ChaosHelper
                         string[] split = content.Split(',');
                         view.Location = new System.Drawing.Point(int.Parse(split[0]), int.Parse(split[1]));
                     }
-                    else if(simpleDirective == "windowsize")
+                    else if (simpleDirective == "windowsize")
                     {
                         string[] split = content.Split(',');
                         view.ClientArea = new System.Drawing.Size(int.Parse(split[0]), int.Parse(split[1]));
 
                     }
-                    else if(simpleDirective == "windowstartopen")
+                    else if (simpleDirective == "windowstartopen")
                     {
                         view.Visible = bool.Parse(content);
                     }
@@ -316,7 +318,7 @@ namespace ChaosHelper
                     }
                     else if (simpleDirective == "tabvisible")
                     {
-                        if(bool.Parse(content))
+                        if (bool.Parse(content))
                         {
                             tempPopoutwindow.toggleVisibility();
                         }
@@ -349,69 +351,103 @@ namespace ChaosHelper
                         rows = int.Parse(content);
                         buttonHeight = (int)((height - (padding * (3 + rows))) / rows);
                     }
-                    else if (directive.IndexOf("Button", StringComparison.InvariantCultureIgnoreCase) != -1)
+                    else
                     {
-                        int span = int.Parse(content);
+                        // OK doesnt seem like simple directive.. so either its totally bad, or its one we have to interpret
 
-                        //Creates Button
-                        HudButton tempBtn = new HudButton();
-                        HudButton tempPopBtn = new HudButton();
-                        
-                        tempBtn.Text = currentTab + "_" + button_count.ToString("D2");
-                        tempBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
-                        tempPopBtn.Text = currentTab + "_" + button_count.ToString("D2");
-                        tempPopBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
+                        int span;// we will still have a span value.. so the following (optional) comma-seperated columns will just try to take place of .txt
 
-                        int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
-                        int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
-                        int btnW = (buttonWidth * span) + (padding * (span - 1));
-                        int btnH = buttonHeight;
+                        // we may have columns of data
+                        List<string> datCols = new List<string>(content.Split(','));
 
-                        
-                        tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                        popoutWindows[currentTab].AddButton(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-
-                        currentCol += span;
-                        if (currentCol > cols)
+                        // if not, then make sure to put original value in here
+                        if (datCols.Count == 0)
+                            span = int.Parse(content);
+                        else
                         {
-                            currentCol = 1;
-                            currentRow++;
+                            // we have to put 1st entry into span,  then condense the rest of the arguments list to be zero-based
+                            span = int.Parse(datCols[0]);
+                            datCols.RemoveAt(0);
                         }
 
-                        button_count++;
-                    }
-                    else if (directive.IndexOf("StaticText", StringComparison.InvariantCultureIgnoreCase) != -1)
-                    {
-                        int span = int.Parse(content);
+                        // lets see what we have...
 
-                        //Creates Button
-                        HudStaticText tempBtn = new HudStaticText();
-                        HudStaticText tempPopBtn = new HudStaticText();
-
-                        tempBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
-                        tempPopBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
-
-                        tempBtn.Text = currentTab + "_" + button_count.ToString("D2");
-                        tempBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
-                        tempPopBtn.Text = currentTab + "_" + button_count.ToString("D2");
-                        tempPopBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
-
-                        int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
-                        int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
-                        int btnW = (buttonWidth * span) + (padding * (span - 1));
-                        int btnH = buttonHeight;
-
-                        tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                        popoutWindows[currentTab].AddStaticText(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-
-                        currentCol += span;
-                        if (currentCol > cols)
+                        if (directive.IndexOf("Button", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
-                            currentCol = 1;
-                            currentRow++;
+                            string defText = null;
+                            string defCommand = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            if (datCols.Count > 1)
+                                defCommand = datCols[1];
+
+                            //Creates Button
+                            ChaosHudButton tempBtn = new ChaosHudButton(defCommand);
+                            ChaosHudButton tempPopBtn = new ChaosHudButton(defCommand);
+
+                            tempBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
+                            tempBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
+                            tempPopBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
+                            tempPopBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
+
+                            int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
+                            int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
+                            int btnW = (buttonWidth * span) + (padding * (span - 1));
+                            int btnH = buttonHeight;
+
+
+                            tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            popoutWindows[currentTab].AddButton(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+
+                            currentCol += span;
+                            if (currentCol > cols)
+                            {
+                                currentCol = 1;
+                                currentRow++;
+                            }
+
+                            button_count++;
+                        }
+                        else if (directive.IndexOf("StaticText", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+                            string defText = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            //Creates Button
+                            ChaosHudStaticText tempBtn = new ChaosHudStaticText();
+                            ChaosHudStaticText tempPopBtn = new ChaosHudStaticText();
+
+                            tempBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
+                            tempPopBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
+
+                            tempBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
+                            tempBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
+                            tempPopBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
+                            tempPopBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
+
+                            int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
+                            int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
+                            int btnW = (buttonWidth * span) + (padding * (span - 1));
+                            int btnH = buttonHeight;
+
+                            tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            popoutWindows[currentTab].AddStaticText(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+
+                            currentCol += span;
+                            if (currentCol > cols)
+                            {
+                                currentCol = 1;
+                                currentRow++;
+                            }
+
+                            button_count++;
                         }
 
-                        button_count++;
+
                     }
                 }
 
@@ -438,8 +474,11 @@ namespace ChaosHelper
             }
         }
 
-        public void HookupEvents(HudControl ctrl, string currentTabName, string ctrlName, string strEvent, string strParam)
+        public void HookupEvents(IChaosHudControl ctrl, string currentTabName, string ctrlName, string strEvent, string strParam)
         {
+            ChaosHudButton btn = ctrl as ChaosHudButton;// bridge until we abstract this func further
+
+
             if (strEvent.Contains("[player]"))
             {
                 strEvent = strEvent.Replace("[player]", Core.CharacterFilter.Name);
@@ -465,7 +504,7 @@ namespace ChaosHelper
                     if (regEvents.ContainsKey(ctrlName))
                     {
                         //Unregister the event handler
-                        ctrl.Hit -= regEvents[ctrlName];
+                        btn.Hit -= regEvents[ctrlName];
 
                         //Store the event inside the dictionary so we can unregister it later
                         regEvents[ctrlName] = newEvent;
@@ -478,7 +517,7 @@ namespace ChaosHelper
 
                     //Register the event
 
-                    ctrl.Hit += newEvent;
+                    btn.Hit += newEvent;
                 }
                 //Handle / commands
                 else if (strEvent.StartsWith("/"))
@@ -491,7 +530,7 @@ namespace ChaosHelper
                     if (regEvents.ContainsKey(ctrlName))
                     {
                         //Unregister the event handler
-                        ctrl.Hit -= regEvents[ctrlName];
+                        btn.Hit -= regEvents[ctrlName];
 
                         //Store the event inside the dictionary so we can unregister it later
                         regEvents[ctrlName] = newEvent;
@@ -504,7 +543,7 @@ namespace ChaosHelper
                     }
 
                     //Register the event
-                    ctrl.Hit += newEvent;
+                    btn.Hit += newEvent;
                 }
                 //Handle raw text
                 else
@@ -517,7 +556,7 @@ namespace ChaosHelper
                     if (regEvents.ContainsKey(ctrlName))
                     {
                         //Unregister the event handler
-                        ctrl.Hit -= regEvents[ctrlName];
+                        btn.Hit -= regEvents[ctrlName];
 
                         //Store the event inside the dictionary so we can unregister it later
                         regEvents[ctrlName] = newEvent;
@@ -530,7 +569,7 @@ namespace ChaosHelper
                     }
 
                     //Register the event
-                    ctrl.Hit += newEvent;
+                    btn.Hit += newEvent;
                 }
 
 
@@ -546,7 +585,7 @@ namespace ChaosHelper
                 if (regEvents.ContainsKey(ctrlName))
                 {
                     //Unregister the event handler
-                    ctrl.Hit -= regEvents[ctrlName];
+                    btn.Hit -= regEvents[ctrlName];
 
                     //Store the event inside the dictionary so we can unregister it later
                     regEvents[ctrlName] = newEvent;
@@ -560,7 +599,7 @@ namespace ChaosHelper
 
                 //Register the event
 
-                ctrl.Hit += newEvent;
+                btn.Hit += newEvent;
             }
         }
 
@@ -602,10 +641,10 @@ namespace ChaosHelper
 
                             // isolate control name and control object
                             string ctrlName = col[0];
-                            HudControl ctrl;
+                            IChaosHudControl ctrl;
                             try
                             {
-                                ctrl = view[ctrlName];
+                                ctrl = view[ctrlName] as IChaosHudControl;
                             }
                             catch
                             {
@@ -613,9 +652,9 @@ namespace ChaosHelper
                             }
 
 
-                            if(ctrl is HudButton)
+                            if(ctrl is ChaosHudButton)
                             {
-                                HudButton temp = (HudButton)ctrl;
+                                ChaosHudButton temp = (ChaosHudButton)ctrl;
 
                                 string currentTabName = ctrlName.Substring(0, ctrlName.IndexOf('_'));
                                 //check if button exists
