@@ -438,6 +438,132 @@ namespace ChaosHelper
             }
         }
 
+        public void HookupEvents(HudControl ctrl, string currentTabName, string ctrlName, string strEvent, string strParam)
+        {
+            if (strEvent.Contains("[player]"))
+            {
+                strEvent = strEvent.Replace("[player]", Core.CharacterFilter.Name);
+            }
+
+            if (strEvent.Contains("[loc]"))
+            {
+                strEvent = strEvent.Replace("[loc]", Core.WorldFilter.GetByName(Core.CharacterFilter.Name).First.Coordinates().ToString());
+            }
+
+            var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
+
+            if (strEvent.StartsWith("/") || regexItem.IsMatch(strEvent))
+            {
+                //if is a /tell command
+                if (!string.IsNullOrEmpty(strParam) && strEvent.StartsWith("/"))
+                {
+                    EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent + "," + strParam));
+                    EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent + "," + strParam));
+
+                    popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
+
+                    if (regEvents.ContainsKey(ctrlName))
+                    {
+                        //Unregister the event handler
+                        ctrl.Hit -= regEvents[ctrlName];
+
+                        //Store the event inside the dictionary so we can unregister it later
+                        regEvents[ctrlName] = newEvent;
+                    }
+                    else
+                    {
+                        //Replace the event
+                        regEvents[ctrlName] = newEvent;
+                    }
+
+                    //Register the event
+
+                    ctrl.Hit += newEvent;
+                }
+                //Handle / commands
+                else if (strEvent.StartsWith("/"))
+                {
+                    EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent));
+                    EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent));
+
+                    popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
+
+                    if (regEvents.ContainsKey(ctrlName))
+                    {
+                        //Unregister the event handler
+                        ctrl.Hit -= regEvents[ctrlName];
+
+                        //Store the event inside the dictionary so we can unregister it later
+                        regEvents[ctrlName] = newEvent;
+                    }
+
+                    else
+                    {
+                        //Replace the event
+                        regEvents[ctrlName] = newEvent;
+                    }
+
+                    //Register the event
+                    ctrl.Hit += newEvent;
+                }
+                //Handle raw text
+                else
+                {
+                    EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
+                    EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
+
+                    popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
+
+                    if (regEvents.ContainsKey(ctrlName))
+                    {
+                        //Unregister the event handler
+                        ctrl.Hit -= regEvents[ctrlName];
+
+                        //Store the event inside the dictionary so we can unregister it later
+                        regEvents[ctrlName] = newEvent;
+                    }
+
+                    else
+                    {
+                        //Replace the event
+                        regEvents[ctrlName] = newEvent;
+                    }
+
+                    //Register the event
+                    ctrl.Hit += newEvent;
+                }
+
+
+            }
+            else
+            {
+
+                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
+                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
+
+                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
+
+                if (regEvents.ContainsKey(ctrlName))
+                {
+                    //Unregister the event handler
+                    ctrl.Hit -= regEvents[ctrlName];
+
+                    //Store the event inside the dictionary so we can unregister it later
+                    regEvents[ctrlName] = newEvent;
+                }
+
+                else
+                {
+                    //Replace the event
+                    regEvents[ctrlName] = newEvent;
+                }
+
+                //Register the event
+
+                ctrl.Hit += newEvent;
+            }
+        }
+
         void LoadConfig(string configName)
         {
             for (int i = 0; i < ConfigChoice.Count; i++)
@@ -574,128 +700,11 @@ namespace ChaosHelper
 
                                         //Creates the event handler for each button
 
-                                        if(col[2].Contains("[player]"))
-                                        {
-                                            col[2] = col[2].Replace("[player]", Core.CharacterFilter.Name);
-                                        }
+                                        string strParam = null;
+                                        if (col.Length >= 4)
+                                            strParam = col[3];
 
-                                        if(col[2].Contains("[loc]"))
-                                        {
-                                            col[2] = col[2].Replace("[loc]", Core.WorldFilter.GetByName(Core.CharacterFilter.Name).First.Coordinates().ToString());
-                                        }
-
-                                        var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
-
-                                        if (col[2].StartsWith("/") || regexItem.IsMatch(col[2]))
-                                        {
-                                            //if is a /tell command
-                                            if (col.Length == 4 && col[2].StartsWith("/"))
-                                            {
-                                                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2] + "," + col[3]));
-                                                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2] + "," + col[3]));
-
-                                                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                                                if (regEvents.ContainsKey(ctrlName))
-                                                {
-                                                    //Unregister the event handler
-                                                    temp.Hit -= regEvents[ctrlName];
-
-                                                    //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[ctrlName] = newEvent;
-                                                }
-                                                else
-                                                {
-                                                    //Replace the event
-                                                    regEvents[ctrlName] = newEvent;
-                                                }
-
-                                                //Register the event
-
-                                                temp.Hit += newEvent;
-                                            }
-                                            //Handle / commands
-                                            else if(col[2].StartsWith("/"))
-                                            {
-                                                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2]));
-                                                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2]));
-
-                                                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                                                if (regEvents.ContainsKey(ctrlName))
-                                                {
-                                                    //Unregister the event handler
-                                                    temp.Hit -= regEvents[ctrlName];
-
-                                                    //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[ctrlName] = newEvent;
-                                                }
-
-                                                else
-                                                {
-                                                    //Replace the event
-                                                    regEvents[ctrlName] = newEvent;
-                                                }
-
-                                                //Register the event
-                                                temp.Hit += newEvent;
-                                            }
-                                            //Handle raw text
-                                            else
-                                            {
-                                                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-                                                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-
-                                                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                                                if (regEvents.ContainsKey(ctrlName))
-                                                {
-                                                    //Unregister the event handler
-                                                    temp.Hit -= regEvents[ctrlName];
-
-                                                    //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[ctrlName] = newEvent;
-                                                }
-
-                                                else
-                                                {
-                                                    //Replace the event
-                                                    regEvents[ctrlName] = newEvent;
-                                                }
-
-                                                //Register the event
-                                                temp.Hit += newEvent;
-                                            }
-
-                                            
-                                        }
-                                        else
-                                        {
-                                          
-                                            EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-                                            EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-
-                                            popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                                            if (regEvents.ContainsKey(ctrlName))
-                                            {
-                                                //Unregister the event handler
-                                                temp.Hit -= regEvents[ctrlName];
-
-                                                //Store the event inside the dictionary so we can unregister it later
-                                                regEvents[ctrlName] = newEvent;
-                                            }
-
-                                            else
-                                            {
-                                                //Replace the event
-                                                regEvents[ctrlName] = newEvent;
-                                            }
-
-                                            //Register the event
-
-                                            temp.Hit += newEvent;
-                                        }
+                                        HookupEvents(ctrl, currentTabName, ctrlName, col[2], strParam);
 
                                        
 
