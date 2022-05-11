@@ -56,35 +56,6 @@ namespace ChaosHelper
                 (ctrl as ChaosHudButton).Image = image;
         }
 
-        public void ChangeControlInfo(string name, bool visibility, string text)
-        {
-            IChaosHudControl ctrl = popoutview[name] as IChaosHudControl;
-            if (ctrl == null)
-                return;
-
-            ctrl.Visible = visibility;
-
-            if (ctrl is ChaosHudButton)
-                (ctrl as ChaosHudButton).Text = text;
-            else if (ctrl is ChaosHudStaticText)
-                (ctrl as ChaosHudStaticText).Text = text;
-            else if (ctrl is ChaosHudCheckBox)
-                (ctrl as ChaosHudCheckBox).Text = text;
-        }
-
-        public void ChangeControlCommand(string name, string command, string param)
-        {
-            IChaosHudControl ctrl = popoutview[name] as IChaosHudControl;
-            if (ctrl == null)
-                return;
-
-            if(ctrl is ChaosHudButton)
-            {
-                (ctrl as ChaosHudButton).Command = command;
-                (ctrl as ChaosHudButton).Param = param;
-            }
-        }
-
         public void SetWindowSize(System.Drawing.Size windowsize)
         {
             this.windowsize = windowsize;

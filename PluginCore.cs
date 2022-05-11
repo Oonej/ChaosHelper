@@ -649,7 +649,7 @@ namespace ChaosHelper
                                     if (col[1].Contains("NOTSET"))
                                     {
                                         temp.Visible = false;
-                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, false, "");
+                                        temp.Mirror.Visible = false;
                                     }
                                     //If button is an image button
                                     
@@ -673,9 +673,9 @@ namespace ChaosHelper
 
                                                 VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
                                                 popoutWindows[currentTabName].SetImage(ctrlName, tempImage);
-                                                popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, "");
                                                 temp.Image = tempImage;
                                                 temp.Text = "";
+                                                temp.Mirror.Text = "";
                                             }
                                             else
                                             {
@@ -687,7 +687,6 @@ namespace ChaosHelper
                                                     if(int.TryParse(imageSettings[1], out iconBG))
                                                     {
                                                         popoutWindows[currentTabName].SetImage(ctrlName, new VirindiViewService.ACImage(iconImage));
-                                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, "");
 
                                                         temp.Image = new VirindiViewService.ACImage(iconImage); 
                                                         temp.Image = new VirindiViewService.ACImage(iconBG);
@@ -695,6 +694,7 @@ namespace ChaosHelper
                                                         if (imageSettings.Length == 3)
                                                         {
                                                             temp.Text = imageSettings[2];
+                                                            temp.Mirror.Text = imageSettings[2];
                                                         }
 
                                                     }
@@ -702,11 +702,11 @@ namespace ChaosHelper
                                                     {
                                                         VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
                                                         popoutWindows[currentTabName].SetImage(ctrlName, tempImage);
-                                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, imageSettings[1]);
                                                         temp.Image = tempImage;
                                                         if(imageSettings.Length == 2)
                                                         {
                                                             temp.Text = imageSettings[1];
+                                                            temp.Mirror.Text = imageSettings[1];
                                                         }
                                                         
                                                     }
@@ -717,10 +717,11 @@ namespace ChaosHelper
                                         else
                                         {
                                             temp.Text = col[1];
-                                            popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, col[1]);
+                                            temp.Mirror.Text = col[1];
                                         }
 
                                         temp.Visible = true;
+                                        temp.Mirror.Visible = true;
 
                                         //Creates the event handler for each button
 
@@ -734,15 +735,15 @@ namespace ChaosHelper
                                         temp.Param = strParam;
 
                                         // override command for popup form
-                                        popoutWindows[currentTabName].ChangeControlCommand(ctrlName, col[2], strParam);
+                                        temp.MirrorButton.Command = col[2];
+                                        temp.MirrorButton.Param = strParam;
 
                                     }
                                 }
-                            } else if (ctrl is HudStaticText)
+                            } else if (ctrl is ChaosHudStaticText)
                             {
-                                HudStaticText temp = (HudStaticText)ctrl;
+                                ChaosHudStaticText temp = (ChaosHudStaticText)ctrl;
 
-                                string currentTabName = ctrlName.Substring(0, ctrlName.IndexOf('_'));
                                 //check if button exists
                                 if (temp != null)
                                 {
@@ -750,7 +751,7 @@ namespace ChaosHelper
                                     if (col[1].Contains("NOTSET"))
                                     {
                                         temp.Visible = false;
-                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, false, "");
+                                        temp.Mirror.Visible = false;
                                     }
                                     //If button is an image button
 
@@ -758,9 +759,59 @@ namespace ChaosHelper
                                     else
                                     {
                                         temp.Text = col[1];
-                                        popoutWindows[currentTabName].ChangeControlInfo(ctrlName, true, col[1]);
+                                        temp.Mirror.Text = col[1];
 
                                         temp.Visible = true;
+                                        temp.Mirror.Visible = true;
+                                    }
+                                }
+                            }
+                            else if (ctrl is ChaosHudCheckBox)
+                            {
+                                ChaosHudCheckBox temp = (ChaosHudCheckBox)ctrl;
+
+                                //check if button exists
+                                if (temp != null)
+                                {
+                                    //Check if button should be set to visible
+                                    if (col[1].Contains("NOTSET"))
+                                    {
+                                        temp.Visible = false;
+                                        temp.Mirror.Visible = false;
+                                    }
+                                    //If button is an image button
+
+                                    // Register the button event handler and make visible
+                                    else
+                                    {
+                                        string text = null;
+                                        string commandOn = null;
+                                        string commandOff = null;
+
+                                        if (col.Length > 1)
+                                            text = col[1];
+
+                                        if (col.Length > 2)
+                                            commandOn = col[2];
+
+                                        if (col.Length > 3)
+                                            commandOff = col[3];
+
+                                        temp.Text = text;
+                                        temp.Mirror.Text = text;
+
+                                        temp.Visible = true;
+                                        temp.Mirror.Visible = true;
+
+
+                                        // override command for main form
+                                        temp.OnCommand = commandOn;
+                                        temp.OffCommand = commandOff;
+
+
+                                        // override command for popout form
+                                        temp.MirrorCheckBox.OnCommand = commandOn;
+                                        temp.MirrorCheckBox.OffCommand = commandOff;
                                     }
                                 }
                             }

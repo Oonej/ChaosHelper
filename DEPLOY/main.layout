@@ -34,7 +34,7 @@ tab: Basic
 		Button_01: 2
 		CheckBox_02: 1,Combat,!combat on,!combat off
 		Button_03: 1
-		Button_04: 1
+		CheckBox_04: 1
 		Button_05: 1
 		Button_06: 1
 		Button_07: 1

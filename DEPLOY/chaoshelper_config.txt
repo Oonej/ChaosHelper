@@ -11,8 +11,8 @@ Emotes_Button_07,atoyot,/say *atoyot*
 Basic_Button_01,Test Tell LOL,/tell [player], I'm talking to myself
 
 Basic_Button_03,NOTSET,!command
-Basic_Button_04,Buff On,!buff on 
-Basic_Button_05,Buff Off,!buff off 
+Basic_CheckBox_04,Buff,!buff on,!buff off
+Basic_Button_05,NOTSET,!command
 Basic_Button_06,Nav On,!nav on 
 Basic_Button_07,Nav Off,!nav off 
 Basic_Button_08,Loot On,!loot on 
