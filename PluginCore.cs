@@ -475,7 +475,7 @@ namespace ChaosHelper
                                     if (col[1].Contains("NOTSET"))
                                     {
                                         temp.Visible = false;
-                                        popoutWindows[currentTabName].ChangeBtnInfo(col[0], false, "");
+                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], false, "");
                                     }
                                     //If button is an image button
                                     
@@ -499,7 +499,7 @@ namespace ChaosHelper
 
                                                 VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
                                                 popoutWindows[currentTabName].SetImage(col[0], tempImage);
-                                                popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, "");
+                                                popoutWindows[currentTabName].ChangeControlInfo(col[0], true, "");
                                                 temp.Image = tempImage;
                                                 temp.Text = "";
                                             }
@@ -513,7 +513,7 @@ namespace ChaosHelper
                                                     if(int.TryParse(imageSettings[1], out iconBG))
                                                     {
                                                         popoutWindows[currentTabName].SetImage(col[0], new VirindiViewService.ACImage(iconImage));
-                                                        popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, "");
+                                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], true, "");
 
                                                         temp.Image = new VirindiViewService.ACImage(iconImage); 
                                                         temp.Image = new VirindiViewService.ACImage(iconBG);
@@ -528,7 +528,7 @@ namespace ChaosHelper
                                                     {
                                                         VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
                                                         popoutWindows[currentTabName].SetImage(col[0], tempImage);
-                                                        popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, imageSettings[1]);
+                                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], true, imageSettings[1]);
                                                         temp.Image = tempImage;
                                                         if(imageSettings.Length == 2)
                                                         {
@@ -543,7 +543,7 @@ namespace ChaosHelper
                                         else
                                         {
                                             temp.Text = col[1];
-                                            popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, col[1]);
+                                            popoutWindows[currentTabName].ChangeControlInfo(col[0], true, col[1]);
                                         }
 
                                         temp.Visible = true;
@@ -689,7 +689,7 @@ namespace ChaosHelper
                                     if (col[1].Contains("NOTSET"))
                                     {
                                         temp.Visible = false;
-                                        popoutWindows[currentTabName].ChangeStaticTextInfo(col[0], false, "");
+                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], false, "");
                                     }
                                     //If button is an image button
 
@@ -697,7 +697,7 @@ namespace ChaosHelper
                                     else
                                     {
                                         temp.Text = col[1];
-                                        popoutWindows[currentTabName].ChangeStaticTextInfo(col[0], true, col[1]);
+                                        popoutWindows[currentTabName].ChangeControlInfo(col[0], true, col[1]);
 
                                         temp.Visible = true;
                                     }

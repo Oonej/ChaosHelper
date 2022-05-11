@@ -79,26 +79,30 @@ namespace ChaosHelper
 
         public void SetImage(string name, VirindiViewService.ACImage image)
         {
-            HudButton temp = (HudButton)popoutview[name];
-            temp.Image = image;
+            HudControl ctrl = popoutview[name];
+            if (ctrl == null)
+                return;
+
+            if(ctrl is HudButton)
+                (ctrl as HudButton).Image = image;
         }
 
-        public void ChangeBtnInfo(string name, bool visibility, string btnText)
+        public void ChangeControlInfo(string name, bool visibility, string text)
         {
-            HudButton temp = (HudButton)popoutview[name];
+            HudControl ctrl = popoutview[name];
+            if (ctrl == null)
+                return;
 
-            temp.Visible = visibility;
-            temp.Text = btnText;
+            ctrl.Visible = visibility;
+
+            if (ctrl is HudButton)
+                (ctrl as HudButton).Text = text;
+            else if (ctrl is HudStaticText)
+                (ctrl as HudStaticText).Text = text;
+            else if (ctrl is HudCheckBox)
+                (ctrl as HudCheckBox).Text = text;
         }
-
-        public void ChangeStaticTextInfo(string name, bool visibility, string btnText)
-        {
-            HudStaticText temp = (HudStaticText)popoutview[name];
-
-            temp.Visible = visibility;
-            temp.Text = btnText;
-        }
-
+        
         public void SetWindowSize(System.Drawing.Size windowsize)
         {
             this.windowsize = windowsize;
