@@ -43,7 +43,7 @@ namespace ChaosHelper
 
         public void AddControl(IChaosHudControl ctrl, System.Drawing.Rectangle rect)
         {
-            popoutTempLayout.AddControl(ctrl.HudControl, rect);
+            popoutTempLayout.AddControl(ctrl.AsHudControl, rect);
         }
 
         public void SetImage(string name, VirindiViewService.ACImage image)

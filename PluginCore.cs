@@ -258,9 +258,12 @@ namespace ChaosHelper
                 int button_count = 1;
                 startingW = 335;
                 startingH = 200;
+                view.ClientArea = new System.Drawing.Size(startingW, startingH);
                 foreach (string _line in layout)
                 {
                     string line = _line.Trim();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
 
                     // replace first colon (if exist) with whitespace (make it optional)
                     int colonIndex = line.IndexOf(':');
@@ -270,16 +273,23 @@ namespace ChaosHelper
                         line = line.Insert(colonIndex, " ");
                     }
 
+                    string directive;
+                    string content;
+
                     // split directive out based on first whitespace
                     int sepIndex = line.IndexOfAny(new char[] { ' ', '\t' });
                     if (sepIndex == -1)
-                        continue;
-
-                    // isolate directive and content
-                    string directive = line.Substring(0, sepIndex).Trim();
-                    string content = line.Substring(sepIndex+1).Trim();
-
-                    view.ClientArea = new System.Drawing.Size(startingW, startingH);
+                    {
+                        // only directive and no values?
+                        directive = line;
+                        content = string.Empty;
+                    }
+                    else
+                    {
+                        // isolate directive and content
+                        directive = line.Substring(0, sepIndex).Trim();
+                        content = line.Substring(sepIndex + 1).Trim();
+                    }
 
                     // for simple  [directive] [value]  lines  just compare a pre-lowercased version `simpleDirective`
                     // for complex directives where values are introduced in the first string (eg. Button_01) then parse using `directive`
@@ -292,8 +302,11 @@ namespace ChaosHelper
                     else if (simpleDirective == "windowsize")
                     {
                         string[] split = content.Split(',');
-                        view.ClientArea = new System.Drawing.Size(int.Parse(split[0]), int.Parse(split[1]));
 
+                        startingW = int.Parse(split[0]);
+                        startingH = int.Parse(split[1]);
+
+                        view.ClientArea = new System.Drawing.Size(startingW, startingH);
                     }
                     else if (simpleDirective == "windowstartopen")
                     {
@@ -375,6 +388,7 @@ namespace ChaosHelper
                         }
 
                         // lets see what we have...
+                        IChaosHudControl newMainControl = null;//only track main form control; when we register later we will use .Mirror
 
                         if (directive.IndexOf("Button", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
@@ -403,23 +417,8 @@ namespace ChaosHelper
                             tempBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
                             tempPopBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
 
-                            int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
-                            int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
-                            int btnW = (buttonWidth * span) + (padding * (span - 1));
-                            int btnH = buttonHeight;
+                            newMainControl = tempBtn;
 
-
-                            tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                            popoutWindows[currentTab].AddControl(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-
-                            currentCol += span;
-                            if (currentCol > cols)
-                            {
-                                currentCol = 1;
-                                currentRow++;
-                            }
-
-                            button_count++;
                         }
                         else if (directive.IndexOf("StaticText", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
@@ -443,22 +442,8 @@ namespace ChaosHelper
                             tempBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
                             tempPopBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
 
-                            int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
-                            int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
-                            int btnW = (buttonWidth * span) + (padding * (span - 1));
-                            int btnH = buttonHeight;
+                            newMainControl = tempBtn;
 
-                            tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                            popoutWindows[currentTab].AddControl(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-
-                            currentCol += span;
-                            if (currentCol > cols)
-                            {
-                                currentCol = 1;
-                                currentRow++;
-                            }
-
-                            button_count++;
                         } else if (directive.IndexOf("CheckBox", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
                             string defText = null;
@@ -486,14 +471,22 @@ namespace ChaosHelper
                             tempBtn.InternalName = currentTab + "_CheckBox_" + button_count.ToString("D2");
                             tempPopBtn.InternalName = currentTab + "_CheckBox_" + button_count.ToString("D2");
 
+                            newMainControl = tempBtn;
+
+                        }
+
+
+                        // if we generated a control, finalize it by performing layout and registration
+                        if(newMainControl != null)
+                        {
                             int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
                             int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
                             int btnW = (buttonWidth * span) + (padding * (span - 1));
                             int btnH = buttonHeight;
 
 
-                            tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                            popoutWindows[currentTab].AddControl(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            tempLayout.AddControl(newMainControl.AsHudControl, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            popoutWindows[currentTab].AddControl(newMainControl.Mirror, new System.Drawing.Rectangle(x, y, btnW, btnH));
 
                             currentCol += span;
                             if (currentCol > cols)
@@ -503,6 +496,9 @@ namespace ChaosHelper
                             }
 
                             button_count++;
+                        } else
+                        {
+                            Util.WriteToChat($"Failed to parse layout line: {line}");
                         }
 
 
@@ -632,7 +628,7 @@ namespace ChaosHelper
                             }
                             catch
                             {
-                                Util.WriteToChat($"cant find {ctrlName} when parsing {configName.Trim()}; check your .layout file!");
+                                Util.WriteToChat($"Cannot find {ctrlName} when parsing {configName.Trim()}; check your .layout file!");
                                 continue;
                             }
 

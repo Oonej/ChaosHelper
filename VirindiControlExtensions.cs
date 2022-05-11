@@ -9,15 +9,26 @@ namespace ChaosHelper
     {
         public interface IChaosHudControl
         {
-            HudControl HudControl { get; }
+            /// <summary>
+            /// Upcasts whatever this control is to a VirindiView HudControl
+            /// </summary>
+            HudControl AsHudControl { get; }
+
+            /// <summary>
+            /// Gets the corresponding "mirrored" copy of this control.
+            /// Accessing Mirror on a mainform button will return the one on popout window, and vice-versa.
+            /// </summary>
             IChaosHudControl Mirror { get; }
+
+
+            // common HudControl properties
             bool Visible { get; set; }
             string Text { get; set; }
         }
 
         public class ChaosHudButton : HudButton, IChaosHudControl
         {
-            public HudControl HudControl { get { return this; } }
+            public HudControl AsHudControl { get { return this; } }
             public string Command;
             public string Param;
 
@@ -41,7 +52,7 @@ namespace ChaosHelper
 
         public class ChaosHudImageButton : HudImageButton, IChaosHudControl
         {
-            public HudControl HudControl { get { return this; } }
+            public HudControl AsHudControl { get { return this; } }
             public string Command;
             public string Param;
 
@@ -68,7 +79,7 @@ namespace ChaosHelper
 
         public class ChaosHudStaticText : HudStaticText, IChaosHudControl
         {
-            public HudControl HudControl { get { return this; } }
+            public HudControl AsHudControl { get { return this; } }
 
             public ChaosHudStaticText MirrorStaticText = null;
             public IChaosHudControl Mirror { get { return MirrorStaticText; } }
@@ -81,7 +92,7 @@ namespace ChaosHelper
 
         public class ChaosHudCheckBox : HudCheckBox, IChaosHudControl
         {
-            public HudControl HudControl { get { return this; } }
+            public HudControl AsHudControl { get { return this; } }
             public string OnCommand;
             public string OffCommand;
 
