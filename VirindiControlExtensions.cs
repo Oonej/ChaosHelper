@@ -29,11 +29,7 @@ namespace ChaosHelper
 
             private void ChaosHudButton_Hit(object sender, EventArgs e)
             {
-                string cmd = PluginCore.Instance.GenerateFinalCommandString(Command, Param);
-                if (string.IsNullOrEmpty(cmd))
-                    return;
-
-                PluginCore.DispatchChatToBoxWithPluginIntercept(cmd);
+                PluginCore.DispatchCommand(Command, Param);
             }
         }
 
@@ -56,11 +52,7 @@ namespace ChaosHelper
 
             private void ChaosHudImageButton_Hit(object sender, EventArgs e)
             {
-                string cmd = PluginCore.Instance.GenerateFinalCommandString(Command, Param);
-                if (string.IsNullOrEmpty(cmd))
-                    return;
-
-                PluginCore.DispatchChatToBoxWithPluginIntercept(cmd);
+                PluginCore.DispatchCommand(Command, Param);
             }
         }
 
@@ -89,15 +81,11 @@ namespace ChaosHelper
             {
                 if (Checked)
                 {
-                    string cmd = PluginCore.Instance.GenerateFinalCommandString(OnCommand, null);
-                    if(!string.IsNullOrEmpty(cmd))
-                        PluginCore.DispatchChatToBoxWithPluginIntercept(cmd);
+                    PluginCore.DispatchCommand(OnCommand, null);
                 }
                 else
                 {
-                    string cmd = PluginCore.Instance.GenerateFinalCommandString(OffCommand, null);
-                    if(!string.IsNullOrEmpty(cmd))
-                        PluginCore.DispatchChatToBoxWithPluginIntercept(cmd);
+                    PluginCore.DispatchCommand(OffCommand, null);
                 }
             }
         }

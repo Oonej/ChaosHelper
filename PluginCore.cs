@@ -484,39 +484,47 @@ namespace ChaosHelper
             }
         }
 
-        public string GenerateFinalCommandString(string strEvent, string strParam)
+        /// <summary>
+        /// Dynamically generates the final command string from provided values and dispatches message to game.
+        /// </summary>
+        public static void DispatchCommand(string command, string param)
         {
-            if (string.IsNullOrEmpty(strEvent))
+            PluginCore.DispatchChatToBoxWithPluginIntercept(Instance.GenerateFinalCommandString(command, param));
+        }
+
+        private string GenerateFinalCommandString(string command, string param)
+        {
+            if (string.IsNullOrEmpty(command))
                 return null;
 
-            if (strEvent.Contains("[player]"))
+            if (command.Contains("[player]"))
             {
-                strEvent = strEvent.Replace("[player]", Core.CharacterFilter.Name);
+                command = command.Replace("[player]", Core.CharacterFilter.Name);
             }
 
-            if (strEvent.Contains("[loc]"))
+            if (command.Contains("[loc]"))
             {
-                strEvent = strEvent.Replace("[loc]", Core.WorldFilter.GetByName(Core.CharacterFilter.Name).First.Coordinates().ToString());
+                command = command.Replace("[loc]", Core.WorldFilter.GetByName(Core.CharacterFilter.Name).First.Coordinates().ToString());
             }
 
             var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
 
-            if (strEvent.StartsWith("/") || regexItem.IsMatch(strEvent))
+            if (command.StartsWith("/") || regexItem.IsMatch(command))
             {
                 //if is a /tell command
-                if (!string.IsNullOrEmpty(strParam) && strEvent.StartsWith("/"))
+                if (!string.IsNullOrEmpty(param) && command.StartsWith("/"))
                 {
-                    return strEvent + "," + strParam;
+                    return command + "," + param;
                 }
                 //Handle / commands
-                else if (strEvent.StartsWith("/"))
+                else if (command.StartsWith("/"))
                 {
-                    return strEvent;
+                    return command;
                 }
                 //Handle raw text
                 else
                 {
-                    return chatLoc + " " + strEvent;
+                    return chatLoc + " " + command;
                 }
 
 
@@ -524,7 +532,7 @@ namespace ChaosHelper
             else
             {
 
-                return chatLoc + " " + strEvent;
+                return chatLoc + " " + command;
             }
         }
 
@@ -722,10 +730,6 @@ namespace ChaosHelper
             }
         }
 
-        private void ClickCommand(object sender, EventArgs e, string command)
-        {
-            DispatchChatToBoxWithPluginIntercept(command);
-        }
 
         //
         //  ?  Tab
@@ -899,6 +903,9 @@ namespace ChaosHelper
         /// <param name="cmd"></param>
         public static void DispatchChatToBoxWithPluginIntercept(string cmd)
         {
+            if (string.IsNullOrEmpty(cmd))
+                return;
+
             if (!Decal_DispatchOnChatCommand(cmd))
                 CoreManager.Current.Actions.InvokeChatParser(cmd);
         }
