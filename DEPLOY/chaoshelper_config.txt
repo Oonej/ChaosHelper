@@ -1,6 +1,6 @@
 LAYOUT: main.layout
 
-Emotes_Button_01,Hearty Laugh,/say *heartylaugh*
+
 Emotes_Button_02,Kneel,/say *kneel*
 Emotes_Button_03,Salute,/say *salute*
 Emotes_Button_04,Surrender,/say *surrender*

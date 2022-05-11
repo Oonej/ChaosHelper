@@ -13,8 +13,6 @@ namespace ChaosHelper
 
         private HudFixedLayout popoutTempLayout = new HudFixedLayout();
         private HudCheckBox thisCheckBox;
-        
-        private Dictionary<string, EventHandler> regEvents = new Dictionary<string, EventHandler>();
 
         private System.Drawing.Size windowsize;
 
@@ -58,26 +56,6 @@ namespace ChaosHelper
             popoutTempLayout.AddControl(button, rect);
         }
 
-        public void SetEvent(string name, EventHandler e)
-        {
-            ChaosHudButton temp = popoutview[name] as ChaosHudButton;
-
-            if (regEvents.ContainsKey(name))
-            {
-                //Unregister the event handler
-                temp.Hit -= regEvents[name];
-                //Store the event inside the dictionary so we can unregister it later
-                regEvents[name] = e;
-            }
-            else
-            {
-                //Replace the event
-                regEvents[name] = e;
-            }
-
-            temp.Hit += e;            
-        }
-
         public void SetImage(string name, VirindiViewService.ACImage image)
         {
             IChaosHudControl ctrl = popoutview[name] as IChaosHudControl;
@@ -103,7 +81,20 @@ namespace ChaosHelper
             else if (ctrl is ChaosHudCheckBox)
                 (ctrl as ChaosHudCheckBox).Text = text;
         }
-        
+
+        public void ChangeControlCommand(string name, string command, string param)
+        {
+            IChaosHudControl ctrl = popoutview[name] as IChaosHudControl;
+            if (ctrl == null)
+                return;
+
+            if(ctrl is ChaosHudButton)
+            {
+                (ctrl as ChaosHudButton).Command = command;
+                (ctrl as ChaosHudButton).Param = param;
+            }
+        }
+
         public void SetWindowSize(System.Drawing.Size windowsize)
         {
             this.windowsize = windowsize;

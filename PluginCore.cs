@@ -44,6 +44,9 @@ namespace ChaosHelper
 	[FriendlyName("ChaosHelper")]
 	public class PluginCore : PluginBase
 	{
+        private static PluginCore _Instance = null;
+        public static PluginCore Instance { get { return _Instance; } }
+
         private VirindiViewService.ViewProperties properties;
         private VirindiViewService.ControlGroup controls;
         private VirindiViewService.HudView view;
@@ -68,7 +71,6 @@ namespace ChaosHelper
         public int startingW = 335, startingH = 200;
 
         //Registered Dictionary of events
-        private Dictionary<string, EventHandler> regEvents = new Dictionary<string, EventHandler>();
         private Dictionary<string, EventHandler> popoutEvents = new Dictionary<string, EventHandler>();
 
         private ArrayList sizes = new ArrayList();
@@ -82,6 +84,8 @@ namespace ChaosHelper
 		{
 			try
 			{
+                _Instance = this;
+
 				Globals.Init("Chaos-Helper", Host, Core);
 
                 LoadWindow();
@@ -376,6 +380,7 @@ namespace ChaosHelper
                         {
                             string defText = null;
                             string defCommand = null;
+                            string defParam = null;
 
                             if (datCols.Count > 0)
                                 defText = datCols[0];
@@ -383,13 +388,17 @@ namespace ChaosHelper
                             if (datCols.Count > 1)
                                 defCommand = datCols[1];
 
-                            //Creates Button
-                            ChaosHudButton tempBtn = new ChaosHudButton(defCommand);
-                            ChaosHudButton tempPopBtn = new ChaosHudButton(defCommand);
+                            if (datCols.Count > 2)
+                                defCommand = datCols[2];
 
-                            tempBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
+                            //Creates Button
+                            ChaosHudButton tempBtn = new ChaosHudButton(defText, defCommand, defParam);
+                            ChaosHudButton tempPopBtn = new ChaosHudButton(defText, defCommand, defParam);
+
                             tempBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
-                            tempPopBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
                             tempPopBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
 
                             int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
@@ -417,16 +426,17 @@ namespace ChaosHelper
                             if (datCols.Count > 0)
                                 defText = datCols[0];
 
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
                             //Creates Button
-                            ChaosHudStaticText tempBtn = new ChaosHudStaticText();
-                            ChaosHudStaticText tempPopBtn = new ChaosHudStaticText();
+                            ChaosHudStaticText tempBtn = new ChaosHudStaticText(defText);
+                            ChaosHudStaticText tempPopBtn = new ChaosHudStaticText(defText);
 
                             tempBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
                             tempPopBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
 
-                            tempBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
                             tempBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
-                            tempPopBtn.Text = defText ?? (currentTab + "_" + button_count.ToString("D2"));
                             tempPopBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
 
                             int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
@@ -474,10 +484,10 @@ namespace ChaosHelper
             }
         }
 
-        public void HookupEvents(IChaosHudControl ctrl, string currentTabName, string ctrlName, string strEvent, string strParam)
+        public string GenerateFinalCommandString(string strEvent, string strParam)
         {
-            ChaosHudButton btn = ctrl as ChaosHudButton;// bridge until we abstract this func further
-
+            if (string.IsNullOrEmpty(strEvent))
+                return null;
 
             if (strEvent.Contains("[player]"))
             {
@@ -496,80 +506,17 @@ namespace ChaosHelper
                 //if is a /tell command
                 if (!string.IsNullOrEmpty(strParam) && strEvent.StartsWith("/"))
                 {
-                    EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent + "," + strParam));
-                    EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent + "," + strParam));
-
-                    popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                    if (regEvents.ContainsKey(ctrlName))
-                    {
-                        //Unregister the event handler
-                        btn.Hit -= regEvents[ctrlName];
-
-                        //Store the event inside the dictionary so we can unregister it later
-                        regEvents[ctrlName] = newEvent;
-                    }
-                    else
-                    {
-                        //Replace the event
-                        regEvents[ctrlName] = newEvent;
-                    }
-
-                    //Register the event
-
-                    btn.Hit += newEvent;
+                    return strEvent + "," + strParam;
                 }
                 //Handle / commands
                 else if (strEvent.StartsWith("/"))
                 {
-                    EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent));
-                    EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, strEvent));
-
-                    popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                    if (regEvents.ContainsKey(ctrlName))
-                    {
-                        //Unregister the event handler
-                        btn.Hit -= regEvents[ctrlName];
-
-                        //Store the event inside the dictionary so we can unregister it later
-                        regEvents[ctrlName] = newEvent;
-                    }
-
-                    else
-                    {
-                        //Replace the event
-                        regEvents[ctrlName] = newEvent;
-                    }
-
-                    //Register the event
-                    btn.Hit += newEvent;
+                    return strEvent;
                 }
                 //Handle raw text
                 else
                 {
-                    EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
-                    EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
-
-                    popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                    if (regEvents.ContainsKey(ctrlName))
-                    {
-                        //Unregister the event handler
-                        btn.Hit -= regEvents[ctrlName];
-
-                        //Store the event inside the dictionary so we can unregister it later
-                        regEvents[ctrlName] = newEvent;
-                    }
-
-                    else
-                    {
-                        //Replace the event
-                        regEvents[ctrlName] = newEvent;
-                    }
-
-                    //Register the event
-                    btn.Hit += newEvent;
+                    return chatLoc + " " + strEvent;
                 }
 
 
@@ -577,29 +524,7 @@ namespace ChaosHelper
             else
             {
 
-                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
-                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + strEvent));
-
-                popoutWindows[currentTabName].SetEvent(ctrlName, newPopupEvent);
-
-                if (regEvents.ContainsKey(ctrlName))
-                {
-                    //Unregister the event handler
-                    btn.Hit -= regEvents[ctrlName];
-
-                    //Store the event inside the dictionary so we can unregister it later
-                    regEvents[ctrlName] = newEvent;
-                }
-
-                else
-                {
-                    //Replace the event
-                    regEvents[ctrlName] = newEvent;
-                }
-
-                //Register the event
-
-                btn.Hit += newEvent;
+                return chatLoc + " " + strEvent;
             }
         }
 
@@ -641,6 +566,9 @@ namespace ChaosHelper
 
                             // isolate control name and control object
                             string ctrlName = col[0];
+                            if (string.IsNullOrEmpty(ctrlName))// might be a blank line.. skip
+                                continue;
+
                             IChaosHudControl ctrl;
                             try
                             {
@@ -648,6 +576,7 @@ namespace ChaosHelper
                             }
                             catch
                             {
+                                Util.WriteToChat($"cant find {ctrlName} when parsing {configName.Trim()}; check your .layout file!");
                                 continue;
                             }
 
@@ -743,9 +672,13 @@ namespace ChaosHelper
                                         if (col.Length >= 4)
                                             strParam = col[3];
 
-                                        HookupEvents(ctrl, currentTabName, ctrlName, col[2], strParam);
 
-                                       
+                                        // override command for main form
+                                        temp.Command = col[2];
+                                        temp.Param = strParam;
+
+                                        // override command for popup form
+                                        popoutWindows[currentTabName].ChangeControlCommand(ctrlName, col[2], strParam);
 
                                     }
                                 }

@@ -9,7 +9,7 @@ tab: Emotes
 	tabposition: 390,50
 	cols : 2
 	rows: 8
-		Button_01: 1
+		Button_01: 1,Hearty Laugh,/say *heartylaugh*
 		Button_02: 1
 		Button_03: 1
 		Button_04: 1
