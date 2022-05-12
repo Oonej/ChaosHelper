@@ -1,20 +1,5 @@
 LAYOUT: main.layout
 
-Basic_Button_01,Test Tell LOL,/tell [player], I'm talking to myself
-
-Basic_Button_03,NOTSET,!command
-Basic_CheckBox_04,Buff,!buff on,!buff off
-Basic_Button_05,NOTSET,!command
-Basic_Button_06,Nav On,!nav on 
-Basic_Button_07,Nav Off,!nav off 
-Basic_Button_08,Loot On,!loot on 
-Basic_Button_09,Loot Off,!loot off 
-Basic_Button_10,All On,!all on 
-Basic_Button_11,Clear,!clear 
-Basic_Button_12,Force Buff,!forcebuff 
-Basic_Button_13,Cancel Buff,!cancelbuff 
-Basic_StaticText_14,Just a label
-
 Adv_Button_01,Loot Rares,!loot rares 
 Adv_Button_02,Loot All,!loot all 
 Adv_Button_03,Jiggle On,!jiggle on 

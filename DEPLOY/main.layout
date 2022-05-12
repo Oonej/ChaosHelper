@@ -32,21 +32,18 @@ tab: Basic
 	tabsize: 340,400
 	tabposition: 390,50
 	cols : 2
-	rows: 8
-		Button_01: 2
-		ToggleButton_02: 1,Combat,!combat on,!combat off
-		Button_03: 1
-		CheckBox_04: 1
-		Button_05: 1
-		Button_06: 1
-		Button_07: 1
-		Button_08: 1
-		Button_09: 1
-		Button_10: 1
-		Button_11: 1
-		Button_12: 1
-		Button_13: 1
-		StaticText_14 2
+	rows: 6
+		StaticText	2,States
+		ToggleButton	1,Combat,!combat on,!combat off
+		ToggleButton	1,Buff,!buff on,!buff off
+		ToggleButton	1,Nav,!nav on,!nav off
+		ToggleButton	1,Loot,!loot on,!loot off
+
+		StaticText	2,Overrides
+		Button		1,All On,!all on
+		Button		1,Clear,!clear
+		Button		1,Force Buff,!forcebuff
+		Button		1,Cancel Buff,!cancelbuff
 
 tab: Adv 
 	tabvisible: false
