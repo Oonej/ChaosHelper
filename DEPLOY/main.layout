@@ -8,16 +8,12 @@ tab: Emotes
 	tabsize: 340,400
 	tabposition: 390,50
 	cols : 2
-	rows: 9
+	rows: 7
 		StaticText	2,Instants
 		Button		1,Hearty Laugh,/say *heartylaugh*
 		Button		1,Cheer,/say *cheer*
 		Button		1,YMCA,/say *ymca*
-		Button		1
-		Button		1
-		Button		1
-		Button		1,
-		Button		1
+		Spacer		1
 
 		StaticText	2,State Toggles
 		ToggleButton	1,Kneel,/say *kneel*,/say *nod*
@@ -25,7 +21,7 @@ tab: Emotes
 		ToggleButton	1,Surrender,/say *surrender*,/say *nod*
 		ToggleButton	1,At Ease,/say *atease*,/say *nod*
 		ToggleButton	1,atoyot,/say *atoyot*,/say *nod*
-		ToggleButton	1
+		Spacer		1
 	
 
 tab: Basic

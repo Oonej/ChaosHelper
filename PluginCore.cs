@@ -507,17 +507,24 @@ namespace ChaosHelper
 
 
                         // if we generated a control, finalize it by performing layout and registration
-                        if(newMainControl != null)
+                        if (newMainControl != null || /*haxx to allow "Spacer" as a noop*/directive.IndexOf("Spacer", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
-                            int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
-                            int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
-                            int btnW = (buttonWidth * span) + (padding * (span - 1));
-                            int btnH = buttonHeight;
+
+                            // do we REAALLY have a control?
+                            if (newMainControl != null)
+                            {
+                                int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
+                                int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
+                                int btnW = (buttonWidth * span) + (padding * (span - 1));
+                                int btnH = buttonHeight;
 
 
-                            tempLayout.AddControl(newMainControl.AsHudControl, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                            popoutWindows[currentTab].AddControl(newMainControl.Mirror, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                                tempLayout.AddControl(newMainControl.AsHudControl, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                                popoutWindows[currentTab].AddControl(newMainControl.Mirror, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            }
 
+
+                            // handle layout update
                             currentCol += span;
                             if (currentCol > cols)
                             {
