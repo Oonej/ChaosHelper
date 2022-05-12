@@ -110,12 +110,8 @@ namespace ChaosHelper
                 Change += ChaosHudCheckBox_Change;
             }
 
-            private bool IgnoreChange = false;
             private void ChaosHudCheckBox_Change(object sender, EventArgs e)
             {
-                if (IgnoreChange)
-                    return;
-
                 if (Checked)
                 {
                     PluginCore.DispatchCommand(OnCommand, null);
@@ -125,14 +121,10 @@ namespace ChaosHelper
                     PluginCore.DispatchCommand(OffCommand, null);
                 }
 
-                
-                // update our mirror, but without dispatching a duplicate command
-                if(MirrorCheckBox != null)
-                {
-                    MirrorCheckBox.IgnoreChange = true;
+
+                // synchronize Checked to mirror (ASSUMING NO LOGIC)
+                if (MirrorCheckBox != null)
                     MirrorCheckBox.Checked = Checked;
-                    MirrorCheckBox.IgnoreChange = false;
-                }
             }
         }
 
@@ -160,6 +152,22 @@ namespace ChaosHelper
                 }
             }
 
+            private bool _Checked = false;
+            public bool Checked
+            {
+                get
+                {
+                    return _Checked;
+                }
+
+                set
+                {
+                    _Checked = value;
+
+                    Invalidate();
+                }
+            }
+
             public ChaosHudToggleButton MirrorToggleButton = null;
             public IChaosHudControl Mirror { get { return MirrorToggleButton; } }
 
@@ -174,7 +182,17 @@ namespace ChaosHelper
 
             private void ChaosHudToggleButton_Hit(object sender, EventArgs e)
             {
-                Util.WriteToChat("WEEE I BEEN CLICKED");
+                Checked = !Checked;
+
+                if (Checked)
+                    PluginCore.DispatchCommand(OnCommand, null);
+                else
+                    PluginCore.DispatchCommand(OffCommand, null);
+
+
+                // synchronize Checked to mirror (ASSUMING NO LOGIC)
+                if(MirrorToggleButton != null)
+                    MirrorToggleButton.Checked = Checked;
             }
 
             protected bool MouseButtonDown = false;
@@ -221,58 +239,43 @@ namespace ChaosHelper
                 }
             }
 
+            public string FinalText
+            {
+                get
+                {
+                    return $"{Text}: {(Checked ? "ON" : "OFF")}";
+                }
+            }
+
             public override void DrawNow(DxTexture iSavedTarget)
             {
                 if (!this.CanDraw || !this.Visible)
                     return;
 
-                Rectangle rc = ClipRegion;
-                HudViewDrawStyle style = Theme;
-
                 base.DrawNow(iSavedTarget);
                 
-                if (rc.Size.Width <= 4 || rc.Size.Height <= 4)
+                if (ClipRegion.Size.Width <= 4 || ClipRegion.Size.Height <= 4)
                     return;
+
+                Theme.FloodFill(iSavedTarget, Checked ? "ComboBackground_Selected" : "ComboBackground_Unselected", ClipRegion);
 
                 if (MouseButtonDown && MouseButtonDownInRect)
                 {
-                    /*if (ImagePressed != null)
-                        ImagePressed.Draw(iSavedTarget, rc);
-                    else if (this.Image != null)
-                        base.DrawNow(iSavedTarget);
-                    else*/ if (this.MouseOver)
-                        style.FloodFill(iSavedTarget, "ButtonBackground_Down_MouseOver", rc);
-                    else
-                        style.FloodFill(iSavedTarget, "ButtonBackground_Down", rc);
-
-                    style.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(rc.Left, rc.Top, 1, rc.Height));
-                    style.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(rc.Left, rc.Top, rc.Width, 1));
-                    style.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(rc.Left, rc.Bottom - 1, rc.Width, 1));
-                    style.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(rc.Right - 1, rc.Top, 1, rc.Height));
+                    Theme.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(ClipRegion.Left, ClipRegion.Top, 1, ClipRegion.Height));
+                    Theme.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(ClipRegion.Left, ClipRegion.Top, ClipRegion.Width, 1));
+                    Theme.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(ClipRegion.Left, ClipRegion.Bottom - 1, ClipRegion.Width, 1));
+                    Theme.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(ClipRegion.Right - 1, ClipRegion.Top, 1, ClipRegion.Height));
                 }
                 else
                 {
-                    /*if (this.Image != null)
-                        base.DrawNow(iSavedTarget);
-                    else */if (this.MouseOver)
-                        style.FloodFill(iSavedTarget, "ButtonBackground_MouseOver", rc);
-                    else
-                        style.FloodFill(iSavedTarget, "ButtonBackground", rc);
-
-                    style.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(rc.Left, rc.Top, 1, rc.Height));
-                    style.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(rc.Left, rc.Top, rc.Width, 1));
-                    style.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(rc.Left, rc.Bottom - 1, rc.Width, 1));
-                    style.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(rc.Right - 1, rc.Top, 1, rc.Height));
+                    Theme.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(ClipRegion.Left, ClipRegion.Top, 1, ClipRegion.Height));
+                    Theme.FloodFill(iSavedTarget, "ButtonHighlight", new Rectangle(ClipRegion.Left, ClipRegion.Top, ClipRegion.Width, 1));
+                    Theme.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(ClipRegion.Left, ClipRegion.Bottom - 1, ClipRegion.Width, 1));
+                    Theme.FloodFill(iSavedTarget, "ButtonShadow", new Rectangle(ClipRegion.Right - 1, ClipRegion.Top, 1, ClipRegion.Height));
                 }
-                /*if (this.b != null)
-                {
-                    if (this.c.IsEmpty)
-                        this.b.Draw(iSavedTarget, rc);
-                    else
-                        this.b.Draw(iSavedTarget, global::b.b(rc, this.c));
-                }*/
-                iSavedTarget.BeginText(style.GetVal<string>("DefaultTextFontFace"), (float)style.GetVal<int>("DefaultTextFontSize"), style.GetVal<int>("DefaultTextFontWeight"), false, style.GetVal<int>("DefaultTextFontShadowSize"), style.GetVal<int>("DefaultTextFontShadowAlpha"));
-                iSavedTarget.WriteText(Text, style.GetColor("ButtonText"), style.GetVal<Color>("DefaultTextFontShadowColor"), WriteTextFormats.Center | WriteTextFormats.VerticalCenter, rc);
+
+                iSavedTarget.BeginText(Theme.GetVal<string>("DefaultTextFontFace"), (float)Theme.GetVal<int>("DefaultTextFontSize"), Theme.GetVal<int>("DefaultTextFontWeight"), false, Theme.GetVal<int>("DefaultTextFontShadowSize"), Theme.GetVal<int>("DefaultTextFontShadowAlpha"));
+                iSavedTarget.WriteText(FinalText, Theme.GetColor("ButtonText"), Theme.GetVal<Color>("DefaultTextFontShadowColor"), WriteTextFormats.Center | WriteTextFormats.VerticalCenter, ClipRegion);
                 iSavedTarget.EndText();
             }
         
