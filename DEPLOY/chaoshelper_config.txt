@@ -1,13 +1,5 @@
 LAYOUT: main.layout
 
-
-Emotes_Button_02,Kneel,/say *kneel*
-Emotes_Button_03,Salute,/say *salute*
-Emotes_Button_04,Surrender,/say *surrender*
-Emotes_Button_05,Cheer,/say *cheer*
-Emotes_Button_06,YMCA,/say *ymca*
-Emotes_Button_07,atoyot,/say *atoyot*
-
 Basic_Button_01,Test Tell LOL,/tell [player], I'm talking to myself
 
 Basic_Button_03,NOTSET,!command
