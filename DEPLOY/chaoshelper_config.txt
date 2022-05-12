@@ -1,20 +1,5 @@
 LAYOUT: main.layout
 
-Adv_Button_01,Loot Rares,!loot rares 
-Adv_Button_02,Loot All,!loot all 
-Adv_Button_03,Jiggle On,!jiggle on 
-Adv_Button_04,Jiggle Off,!jiggle off 
-Adv_Button_05,Peace On,!peace on 
-Adv_Button_06,Peace Off,!peace off 
-Adv_Button_07,Nav Boost On,!navboost on 
-Adv_Button_08,Nav Boost Off,!navboost off 
-Adv_Button_09,Summon On,!sum on 
-Adv_Button_10,Summon Off,!sum off 
-Adv_Button_11,Corners On,!corners on 
-Adv_Button_12,Corners Off,!corners off 
-Adv_Button_13,NOTSET,!command 
-Adv_Button_14,NOTSET,!command 
-
 Ports_Button_01,Use Portal,!portal 
 Ports_Button_02,[9561],!prim
 Ports_Button_03,[9562],!sec 
