@@ -32,7 +32,7 @@ tab: Basic
 	cols : 2
 	rows: 8
 		Button_01: 2
-		CheckBox_02: 1,Combat,!combat on,!combat off
+		ToggleButton_02: 1,Combat,!combat on,!combat off
 		Button_03: 1
 		CheckBox_04: 1
 		Button_05: 1

@@ -390,7 +390,37 @@ namespace ChaosHelper
                         // lets see what we have...
                         IChaosHudControl newMainControl = null;//only track main form control; when we register later we will use .Mirror
 
-                        if (directive.IndexOf("Button", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        if (directive.IndexOf("ToggleButton", StringComparison.InvariantCultureIgnoreCase) != -1)//must check before regular Button
+                        {
+                            string defText = null;
+                            string defCommandOn = null;
+                            string defCommandOff = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            if (datCols.Count > 1)
+                                defCommandOn = datCols[1];
+
+                            if (datCols.Count > 2)
+                                defCommandOff = datCols[2];
+
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
+                            //Creates Button
+                            ChaosHudToggleButton tempBtn = new ChaosHudToggleButton(defText, defCommandOn, defCommandOff);
+                            ChaosHudToggleButton tempPopBtn = new ChaosHudToggleButton(defText, defCommandOn, defCommandOff);
+                            tempBtn.MirrorToggleButton = tempPopBtn;
+                            tempPopBtn.MirrorToggleButton = tempBtn;
+
+                            tempBtn.InternalName = currentTab + "_ToggleButton_" + button_count.ToString("D2");
+                            tempPopBtn.InternalName = currentTab + "_ToggleButton_" + button_count.ToString("D2");
+
+                            newMainControl = tempBtn;
+
+                        }
+                        else if (directive.IndexOf("Button", StringComparison.InvariantCultureIgnoreCase) != -1)
                         {
                             string defText = null;
                             string defCommand = null;
@@ -403,7 +433,7 @@ namespace ChaosHelper
                                 defCommand = datCols[1];
 
                             if (datCols.Count > 2)
-                                defCommand = datCols[2];
+                                defParam = datCols[2];
 
                             if (string.IsNullOrEmpty(defText))
                                 defText = currentTab + "_" + button_count.ToString("D2");
@@ -721,17 +751,21 @@ namespace ChaosHelper
 
                                         //Creates the event handler for each button
 
+                                        string strCommand = null;
+                                        if (col.Length > 2)
+                                            strCommand = col[2];
+
                                         string strParam = null;
-                                        if (col.Length >= 4)
+                                        if (col.Length > 3)
                                             strParam = col[3];
 
 
                                         // override command for main form
-                                        temp.Command = col[2];
+                                        temp.Command = strCommand;
                                         temp.Param = strParam;
 
                                         // override command for popup form
-                                        temp.MirrorButton.Command = col[2];
+                                        temp.MirrorButton.Command = strCommand;
                                         temp.MirrorButton.Param = strParam;
 
                                     }
@@ -810,7 +844,59 @@ namespace ChaosHelper
                                         temp.MirrorCheckBox.OffCommand = commandOff;
                                     }
                                 }
+                            } else if (ctrl is ChaosHudToggleButton)
+                            {
+                                ChaosHudToggleButton temp = (ChaosHudToggleButton)ctrl;
+
+                                //check if button exists
+                                if (temp != null)
+                                {
+                                    //Check if button should be set to visible
+                                    if (col[1].Contains("NOTSET"))
+                                    {
+                                        temp.Visible = false;
+                                        temp.Mirror.Visible = false;
+                                    }
+                                    //If button is an image button
+
+                                    // Register the button event handler and make visible
+                                    else
+                                    {
+                                        string text = null;
+                                        string commandOn = null;
+                                        string commandOff = null;
+
+                                        if (col.Length > 1)
+                                            text = col[1];
+
+                                        if (col.Length > 2)
+                                            commandOn = col[2];
+
+                                        if (col.Length > 3)
+                                            commandOff = col[3];
+
+                                        temp.Text = text;
+                                        temp.Mirror.Text = text;
+
+                                        temp.Visible = true;
+                                        temp.Mirror.Visible = true;
+
+
+                                        // override command for main form
+                                        temp.OnCommand = commandOn;
+                                        temp.OffCommand = commandOff;
+
+
+                                        // override command for popout form
+                                        temp.MirrorToggleButton.OnCommand = commandOn;
+                                        temp.MirrorToggleButton.OffCommand = commandOff;
+                                    }
+                                }
                             }
+
+
+
+
                         }
                     }
                     catch(Exception ex)
