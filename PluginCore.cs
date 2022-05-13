@@ -265,6 +265,13 @@ namespace ChaosHelper
                     if (string.IsNullOrEmpty(line))
                         continue;
 
+                    // trim comment
+                    int commentIndex = line.IndexOf("~~");
+                    if (commentIndex == -1)
+                        commentIndex = line.IndexOf("//");
+                    if (commentIndex != -1)
+                        line = line.Substring(0, commentIndex).Trim();
+
                     // replace first colon (if exist) with whitespace (make it optional)
                     int colonIndex = line.IndexOf(':');
                     if (colonIndex != -1)
@@ -290,6 +297,10 @@ namespace ChaosHelper
                         directive = line.Substring(0, sepIndex).Trim();
                         content = line.Substring(sepIndex + 1).Trim();
                     }
+
+					// make sure we really landed on something
+                    if (string.IsNullOrEmpty(directive))
+                        continue;
 
                     // for simple  [directive] [value]  lines  just compare a pre-lowercased version `simpleDirective`
                     // for complex directives where values are introduced in the first string (eg. Button_01) then parse using `directive`
@@ -633,6 +644,13 @@ namespace ChaosHelper
                 foreach(string _line in configInfo)
                 {
                     string line = _line.Trim();
+
+                    // trim comment
+                    int commentIndex = line.IndexOf("~~");
+                    if (commentIndex == -1)
+                        commentIndex = line.IndexOf("//");
+                    if (commentIndex != -1)
+                        line = line.Substring(0, commentIndex).Trim();
 
                     try
                     {

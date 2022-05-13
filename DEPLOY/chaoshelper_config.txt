@@ -1,9 +1,26 @@
+// import the layout file;  every config needs at least one!
 LAYOUT: main.layout
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~ double tilde works as comments, too
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// now add definitions for all your button declarations from layout file!
+//
+//
+// as of 2.2.6.0  these are considered optional overrides;  you could specify
+// this information as defaults in the  .layout  file and remove their
+// corresponding entries from this  .txt  file
+//
+// (unless you are doing something specific like multiple .TXT files
+// referencing the same .LAYOUT file)
+
+
+// portals tab
 Ports_Button_01,Use Portal,!portal 
 Ports_Button_02,[9561],!prim
 Ports_Button_03,[9562],!sec 
-Ports_Button_04,[10733],!pr 
+Ports_Button_04,[10733],!pr 				~~ random comment for testing
 Ports_Button_05,[10725],!aphus 
 Ports_Button_06,[10727],!sanc 
 Ports_Button_07,[10728],!caul 
@@ -26,6 +43,7 @@ Ports_Button_23,[8588],!ah
 Ports_Button_24,[8590],!hom 
 Ports_Button_25,[8383],!hr 
 
+// attacks tab
 Atk_Button_01,Atk Low,!attklow 
 Atk_Button_02,Atk Mid,!attkmed 
 Atk_Button_03,Atk High,!attkhigh 
@@ -36,6 +54,7 @@ Atk_Button_07,Atk Range 30,!rangehigh
 Atk_Button_08,Atk Range 60,!rangemax 
 Atk_Button_09,NOTSET,!command 
 
+// ranges tab
 Rngs_Button_01,Approach Low,!approachlow 
 Rngs_Button_02,Follow Low,!frangelow 
 Rngs_Button_03,Approach Med,!approachmed 
@@ -51,6 +70,7 @@ Rngs_Button_12,NOTSET,!command
 Rngs_Button_13,NOTSET,!command 
 Rngs_Button_14,NOTSET,!command 
 
+// jumps tab
 Jump_Button_01,Forward 100,!fjump100	 
 Jump_Button_02,NOTSET,!command 
 Jump_Button_03,NOTSET,!command 
@@ -107,6 +127,7 @@ Jump_Button_53,NOTSET,!command
 Jump_Button_54,NOTSET,!command 
 Jump_Button_55,Shift 25,!sjump25 
 
+// miscellaneous tab
 Misc_Button_01,Use Npc,!npc 
 Misc_Button_02,Use Vendor,!vendor 
 Misc_Button_03,/MP,!mp 

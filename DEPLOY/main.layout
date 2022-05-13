@@ -1,12 +1,16 @@
+// main window properties
 windowposition: 50,50
 windowstartopen: false
 windowsize: 330,200
 buttonpadding: 10
 
+
+// now we define our tabs and what controls we want in them
+
 tab: Emotes
 	tabvisible: false
 	tabsize: 340,400
-	tabposition: 390,50
+	tabposition: 390,50		// random comment for testing
 	cols : 2
 	rows: 7
 		StaticText	2,Instants
