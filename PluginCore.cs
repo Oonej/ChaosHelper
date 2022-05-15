@@ -599,6 +599,11 @@ namespace ChaosHelper
                 command = command.Replace("[loc]", Core.WorldFilter.GetByName(Core.CharacterFilter.Name).First.Coordinates().ToString());
             }
 
+            if (command.Contains("[chatloc]"))
+            {
+                command = command.Replace("[chatloc]", chatLoc);
+            }
+
             var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
 
             if (command.StartsWith("/") || regexItem.IsMatch(command))
