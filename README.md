@@ -35,7 +35,7 @@ _ex:_ `Adv_Button_01,Loot Rares,!loot rares`
 
 _ex:_ `Basic_StaticText_08,Combat Section` _**(NEW)**_
 
-_ex:_ `Basic_CheckBox_04,Combat,!combat on,!combat off` _**(NEW)**_
+_ex:_ `Basic_ToggleButton_04,Combat,!combat on,!combat off` _**(NEW)**_
 
 ##### The columns are broken-down here:
 
@@ -53,7 +53,7 @@ _ex:_ **Adv\_Button\_01**_,Loot Rares,!loot rares_
 ###### `<ControlType>` should be replaced with:
   - `Button` - a clickable button which issues a command
   - `StaticText` - a text label _**(NEW)**_
-  - `CheckBox` - a toggleable button which issues either an ON command or OFF command _**(NEW)**_
+  - `ToggleButton` - a toggleable button which issues either an ON command or OFF command _**(NEW)**_
 
 ###### `<##>` instance should be replaced with:
   - `01` and incrementing for each control you add
@@ -74,13 +74,13 @@ _ex:_ _Adv\_Button\_01,Loot Rares,_**!loot rares**
 - If you want this meta to only apply to the player calling the command, you can now use [player] to plug the player name into the command. EXAMPLE: /tell [player], I'm talking to myself... OUTPUT: "You think, "I'm talking to myself..."
 - If you want to display the coords of the player who calls the command, you can now use [loc] to plug the coordinates of the player into the command. Example: I'm located at [loc]! OUTPUT: "I'm located at 34.5s, 54.2w!
 - _optional if `StaticText`_ _**(NEW)**_
-- _"on" command if `CheckBox`_ _**(NEW)**_
+- _"on" command if `ToggleButton`_ _**(NEW)**_
 
 #### (4) FOURTH COLUMN: Extra parameter for some controls
 
-_ex:_ _Basic_CheckBox_04,Combat,!combat on,_**!combat off**
+_ex:_ _Basic_ToggleButton_04,Combat,!combat on,_**!combat off**
 
-- _"off" command if `CheckBox`_
+- _"off" command if `ToggleButton`_
 
 ##### Example:
 ```
@@ -157,7 +157,7 @@ Possibly allow the ability to load custom images instead of AC Icons... if I get
 ```
 V2.2.6 (NEW)
 Added support for "StaticText" .layout/.txt field type for custom labels.
-Added support for "CheckBox" .layout/.txt field type for issuing an "on" command or "off" command depending on check mark
+Added support for "ToggleButton" .layout/.txt field type for issuing an "on" command or "off" command depending on state
 V2.2.5
 Added new chat command /ch settab # to auto switch to a tab via command.
 V2.2.4
