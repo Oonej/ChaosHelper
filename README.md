@@ -116,7 +116,7 @@ Some nice button backgrounds include:
 19518, 19519, 19532, 19533, 19534, 19535
 etc..
 
-Use Digero's Ac Icon Browser to view all possible icons - http://decal.acasylum.com/icon_browser.php
+Use Digero's Ac Icon Browser to view all possible icons - https://acasylum.azurewebsites.net/icon_browser.php
 Right-click an icon to copy the Decimal value
 
 ## UI Layout Configuration File (_default: `main.layout`_)
