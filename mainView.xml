@@ -18,6 +18,9 @@
         <control progid="DecalControls.StaticText" name="VersionLbl" left="190" top="130" width="200" height="18" text="Version 1.0"/>
         <control progid="DecalControls.StaticText" name="Thnks" left="170" top="150" width="200" height="18" text="By: Invisible Fire of MT"/>
         <control progid="DecalControls.StaticText" name="Thnks2" left="170" top="170" width="200" height="18" text="and Strike Athius of RC"/>
+        
+        
+        
       </control>
     </page>
 

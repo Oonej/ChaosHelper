@@ -51,6 +51,8 @@ namespace ChaosHelper
         private VirindiViewService.ControlGroup controls;
         private VirindiViewService.HudView view;
 
+        private string VersionString = "Version 2.2.6.0";
+        private string CustomVersionString = "";
         private string chatLoc = "";
         public HudTextBox ChatCommand { get; private set; }
         public HudStaticText VersionLbl { get; private set; }
@@ -200,6 +202,15 @@ namespace ChaosHelper
                     chatLoc = col[1];
                     ChatCommand.Text = col[1];
                 }
+                else if (line.Contains("versiontext"))
+                {
+                    CustomVersionString = col[1].Trim();
+
+                    if (!string.IsNullOrEmpty(CustomVersionString))
+                        VersionLbl.Text = VersionString + " - " + CustomVersionString;
+                    else
+                        VersionLbl.Text = VersionString;
+                }
             } 
         }
 
@@ -232,7 +243,11 @@ namespace ChaosHelper
 
             TabView.OpenTabChange += new EventHandler(TabChanged);
 
-            VersionLbl.Text = "Version 2.2.6.0";
+            if (!string.IsNullOrEmpty(CustomVersionString))
+                VersionLbl.Text = VersionString + " - " + CustomVersionString;
+            else
+                VersionLbl.Text = VersionString;
+
             ChatCommand.Text = chatLoc;
         }
 

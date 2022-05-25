@@ -7,7 +7,7 @@ buttonpadding: 10
 
 // now we define our tabs and what controls we want in them
 
-tab: Emotes
+tab: My Emotes
 	tabvisible: false
 	tabsize: 340,400
 	tabposition: 390,50		// random comment for testing
@@ -25,6 +25,27 @@ tab: Emotes
 		ToggleButton	1,Surrender,/say *surrender*,/say *nod*
 		ToggleButton	1,At Ease,/say *atease*,/say *nod*
 		ToggleButton	1,atoyot,/say *atoyot*,/say *nod*
+		Spacer		1
+
+
+tab: Group Emotes
+	tabvisible: false
+	tabsize: 340,400
+	tabposition: 390,50		// random comment for testing
+	cols : 2
+	rows: 7
+		StaticText	2,Instants
+		Button		1,Hearty Laugh,!heartylaugh
+		Button		1,Cheer,!cheer
+		Button		1,YMCA,!ymca
+		Spacer		1
+
+		StaticText	2,State Toggles
+		ToggleButton	1,Kneel,!kneel,!nod
+		ToggleButton	1,Salute,!salute,!nod
+		ToggleButton	1,Surrender,!surrender,!nod
+		ToggleButton	1,At Ease,!atease,!nod
+		ToggleButton	1,atoyot,!atoyot,!nod
 		Spacer		1
 	
 
@@ -203,4 +224,4 @@ tab: Misc
 		Button_01: 1
 		Button_02: 1
 		Button_03: 1
-		Button_04: 1
+		Button		1,Chat Loc,/say [chatloc]

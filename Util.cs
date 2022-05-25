@@ -112,6 +112,9 @@ namespace ChaosHelper
                         else if(line.Contains("default config"))
                         {
                             writer.WriteLine("default config:" + config);
+                        } else if(line.Contains("versiontext"))
+                        {
+                            writer.WriteLine(line);//just preserve current line
                         }
                     }
                 }
