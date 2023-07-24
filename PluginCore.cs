@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Text.RegularExpressions;
 
+using ChaosHelper.VirindiControlExtensions;
+
 /*
  * Created by Mag-nus. 8/19/2011, VVS added by Virindi-Inquisitor.
  * 
@@ -42,6 +44,9 @@ namespace ChaosHelper
 	[FriendlyName("ChaosHelper")]
 	public class PluginCore : PluginBase
 	{
+        private static PluginCore _Instance = null;
+        public static PluginCore Instance { get { return _Instance; } }
+
         private VirindiViewService.ViewProperties properties;
         private VirindiViewService.ControlGroup controls;
         private VirindiViewService.HudView view;
@@ -66,7 +71,6 @@ namespace ChaosHelper
         public int startingW = 335, startingH = 200;
 
         //Registered Dictionary of events
-        private Dictionary<string, EventHandler> regEvents = new Dictionary<string, EventHandler>();
         private Dictionary<string, EventHandler> popoutEvents = new Dictionary<string, EventHandler>();
 
         private ArrayList sizes = new ArrayList();
@@ -80,6 +84,8 @@ namespace ChaosHelper
 		{
 			try
 			{
+                _Instance = this;
+
 				Globals.Init("Chaos-Helper", Host, Core);
 
                 LoadWindow();
@@ -226,7 +232,7 @@ namespace ChaosHelper
 
             TabView.OpenTabChange += new EventHandler(TabChanged);
 
-            VersionLbl.Text = "Version 2.2.5.0";
+            VersionLbl.Text = "Version 2.2.6.0";
             ChatCommand.Text = chatLoc;
         }
 
@@ -252,129 +258,298 @@ namespace ChaosHelper
                 int button_count = 1;
                 startingW = 335;
                 startingH = 200;
-                foreach (string line in layout)
+                view.ClientArea = new System.Drawing.Size(startingW, startingH);
+                foreach (string _line in layout)
                 {
-                    string[] words = { "windowsize:", "buttonpadding:", "tab:", "cols:", "rows:", "button_" };
+                    string line = _line.Trim();
+                    if (string.IsNullOrEmpty(line))
+                        continue;
 
-                    string temp = "";
+                    // trim comment
+                    int commentIndex = line.IndexOf("~~");
+                    if (commentIndex == -1)
+                        commentIndex = line.IndexOf("//");
+                    if (commentIndex != -1)
+                        line = line.Substring(0, commentIndex).Trim();
 
-
-                    view.ClientArea = new System.Drawing.Size(startingW, startingH);
-
-                    if (line.Contains("windowposition:"))
+                    // replace first colon (if exist) with whitespace (make it optional)
+                    int colonIndex = line.IndexOf(':');
+                    if (colonIndex != -1)
                     {
-                        temp = line.Remove(0, "windowposition:".Length);
-                        string[] split = temp.Split(',');
+                        line = line.Remove(colonIndex, 1);
+                        line = line.Insert(colonIndex, " ");
+                    }
+
+                    string directive;
+                    string content;
+
+                    // split directive out based on first whitespace
+                    int sepIndex = line.IndexOfAny(new char[] { ' ', '\t' });
+                    if (sepIndex == -1)
+                    {
+                        // only directive and no values?
+                        directive = line;
+                        content = string.Empty;
+                    }
+                    else
+                    {
+                        // isolate directive and content
+                        directive = line.Substring(0, sepIndex).Trim();
+                        content = line.Substring(sepIndex + 1).Trim();
+                    }
+
+					// make sure we really landed on something
+                    if (string.IsNullOrEmpty(directive))
+                        continue;
+
+                    // for simple  [directive] [value]  lines  just compare a pre-lowercased version `simpleDirective`
+                    // for complex directives where values are introduced in the first string (eg. Button_01) then parse using `directive`
+                    string simpleDirective = directive.ToLowerInvariant();
+                    if (simpleDirective == "windowposition")
+                    {
+                        string[] split = content.Split(',');
                         view.Location = new System.Drawing.Point(int.Parse(split[0]), int.Parse(split[1]));
                     }
-                    else if(line.Contains("windowsize:"))
+                    else if (simpleDirective == "windowsize")
                     {
-                        temp = line.Remove(0, "windowsize:".Length);
-                        string[] split = temp.Split(',');
+                        string[] split = content.Split(',');
+
                         startingW = int.Parse(split[0]);
                         startingH = int.Parse(split[1]);
 
-                        view.ClientArea = new System.Drawing.Size(startingW, startingW);
-
+                        view.ClientArea = new System.Drawing.Size(startingW, startingH);
                     }
-                    else if(line.Contains("windowstartopen:"))
+                    else if (simpleDirective == "windowstartopen")
                     {
-                        temp = line.Remove(0, "windowstartopen:".Length);
-                        view.Visible = bool.Parse(temp);
+                        view.Visible = bool.Parse(content);
                     }
-                    else if (line.Contains("buttonpadding:"))
+                    else if (simpleDirective == "buttonpadding")
                     {
-                        temp = line.Remove(0, words[1].Length);
-                        padding = int.Parse(temp.Trim());
+                        padding = int.Parse(content);
                     }
-                    else if (line.Contains("tab:"))
+                    else if (simpleDirective == "tab")
                     {
                         button_count = 1;
                         currentRow = 1;
                         currentCol = 1;
                         cols = 0;
                         rows = 0;
-                        temp = line.Remove(0, words[2].Length).Trim();
                         tempLayout = new HudFixedLayout();
 
                         tempPopoutwindow = new PopoutWindow();
 
-                        tempLayout.InternalName = temp;
-                        currentTab = temp;
+                        tempLayout.InternalName = content;
+                        currentTab = content;
 
-                        popoutWindows.Add(temp, tempPopoutwindow);
-                        TabView.AddTab(tempLayout, temp);
+                        popoutWindows.Add(content, tempPopoutwindow);
+                        TabView.AddTab(tempLayout, content);
                     }
-                    else if (line.Contains("tabvisible:"))
+                    else if (simpleDirective == "tabvisible")
                     {
-                        temp = line.Remove(0, "tabvisible:".Length);
-                        if(bool.Parse(temp))
+                        if (bool.Parse(content))
                         {
                             tempPopoutwindow.toggleVisibility();
                         }
                     }
-                    else if (line.Contains("tabsize:"))
+                    else if (simpleDirective == "tabsize")
                     {
-                        temp = line.Remove(0, "tabsize:".Length);
-                        string[] split = temp.Split(',');
+                        string[] split = content.Split(',');
                         width = int.Parse(split[0].Trim());
                         height = int.Parse(split[1].Trim());
 
                         sizes.Add(new System.Drawing.Size(width, height));
                         tempPopoutwindow.SetWindowSize(new System.Drawing.Size(width, height - 25));
                     }
-                    else if (line.Contains("tabposition:"))
+                    else if (simpleDirective == "tabposition")
                     {
-                        temp = line.Remove(0, "tabposition:".Length);
-                        string[] split = temp.Split(',');
+                        string[] split = content.Split(',');
                         int tabx = int.Parse(split[0].Trim());
                         int taby = int.Parse(split[1].Trim());
 
                         locations.Add(new System.Drawing.Point(tabx, taby));
                         tempPopoutwindow.SetWindowPos(new System.Drawing.Point(tabx, taby));
                     }
-                    else if (line.Contains("cols:"))
+                    else if (simpleDirective == "cols")
                     {
-                        temp = line.Remove(0, words[3].Length);
-                        cols = int.Parse(temp.Trim());
+                        cols = int.Parse(content.Trim());
                         buttonWidth = (int)((width - (padding * (1 + cols))) / cols);
                     }
-                    else if (line.Contains("rows:"))
+                    else if (simpleDirective == "rows")
                     {
-                        temp = line.Remove(0, words[4].Length);
-                        rows = int.Parse(temp.Trim());
+                        rows = int.Parse(content);
                         buttonHeight = (int)((height - (padding * (3 + rows))) / rows);
                     }
-                    else if (line.Contains("Button"))
+                    else
                     {
-                        int span = int.Parse(line.Remove(0, words[5].Length + 3).Trim());
+                        // OK doesnt seem like simple directive.. so either its totally bad, or its one we have to interpret
 
-                        //Creates Button
-                        HudButton tempBtn = new HudButton();
-                        HudButton tempPopBtn = new HudButton();
-                        
-                        tempBtn.Text = currentTab + "_" + button_count.ToString("D2");
-                        tempBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
-                        tempPopBtn.Text = currentTab + "_" + button_count.ToString("D2");
-                        tempPopBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
+                        int span;// we will still have a span value.. so the following (optional) comma-seperated columns will just try to take place of .txt
 
-                        int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
-                        int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
-                        int btnW = (buttonWidth * span) + (padding * (span - 1));
-                        int btnH = buttonHeight;
+                        // we may have columns of data
+                        List<string> datCols = new List<string>(content.Split(','));
 
-                        
-                        tempLayout.AddControl(tempBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-                        popoutWindows[currentTab].AddButton(tempPopBtn, new System.Drawing.Rectangle(x, y, btnW, btnH));
-
-                        currentCol += span;
-                        if (currentCol > cols)
+                        // if not, then make sure to put original value in here
+                        if (datCols.Count == 0)
+                            span = int.Parse(content);
+                        else
                         {
-                            currentCol = 1;
-                            currentRow++;
+                            // we have to put 1st entry into span,  then condense the rest of the arguments list to be zero-based
+                            span = int.Parse(datCols[0]);
+                            datCols.RemoveAt(0);
                         }
 
-                        button_count++;
+                        // lets see what we have...
+                        IChaosHudControl newMainControl = null;//only track main form control; when we register later we will use .Mirror
+
+                        if (directive.IndexOf("ToggleButton", StringComparison.InvariantCultureIgnoreCase) != -1)//must check before regular Button
+                        {
+                            string defText = null;
+                            string defCommandOn = null;
+                            string defCommandOff = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            if (datCols.Count > 1)
+                                defCommandOn = datCols[1];
+
+                            if (datCols.Count > 2)
+                                defCommandOff = datCols[2];
+
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
+                            //Creates Button
+                            ChaosHudToggleButton tempBtn = new ChaosHudToggleButton(defText, defCommandOn, defCommandOff);
+                            ChaosHudToggleButton tempPopBtn = new ChaosHudToggleButton(defText, defCommandOn, defCommandOff);
+                            tempBtn.MirrorToggleButton = tempPopBtn;
+                            tempPopBtn.MirrorToggleButton = tempBtn;
+
+                            tempBtn.InternalName = currentTab + "_ToggleButton_" + button_count.ToString("D2");
+                            tempPopBtn.InternalName = currentTab + "_ToggleButton_" + button_count.ToString("D2");
+
+                            newMainControl = tempBtn;
+
+                        }
+                        else if (directive.IndexOf("Button", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+                            string defText = null;
+                            string defCommand = null;
+                            string defParam = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            if (datCols.Count > 1)
+                                defCommand = datCols[1];
+
+                            if (datCols.Count > 2)
+                                defParam = datCols[2];
+
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
+                            //Creates Button
+                            ChaosHudButton tempBtn = new ChaosHudButton(defText, defCommand, defParam);
+                            ChaosHudButton tempPopBtn = new ChaosHudButton(defText, defCommand, defParam);
+                            tempBtn.MirrorButton = tempPopBtn;
+                            tempPopBtn.MirrorButton = tempBtn;
+
+                            tempBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
+                            tempPopBtn.InternalName = currentTab + "_Button_" + button_count.ToString("D2");
+
+                            newMainControl = tempBtn;
+
+                        }
+                        else if (directive.IndexOf("StaticText", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+                            string defText = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
+                            //Creates Button
+                            ChaosHudStaticText tempBtn = new ChaosHudStaticText(defText);
+                            ChaosHudStaticText tempPopBtn = new ChaosHudStaticText(defText);
+                            tempBtn.MirrorStaticText = tempPopBtn;
+                            tempPopBtn.MirrorStaticText = tempBtn;
+
+                            tempBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
+                            tempPopBtn.TextAlignment = VirindiViewService.WriteTextFormats.Center | VirindiViewService.WriteTextFormats.VerticalCenter;
+
+                            tempBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
+                            tempPopBtn.InternalName = currentTab + "_StaticText_" + button_count.ToString("D2");
+
+                            newMainControl = tempBtn;
+
+                        } else if (directive.IndexOf("CheckBox", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+                            string defText = null;
+                            string defCommandOn = null;
+                            string defCommandOff = null;
+
+                            if (datCols.Count > 0)
+                                defText = datCols[0];
+
+                            if (datCols.Count > 1)
+                                defCommandOn = datCols[1];
+
+                            if (datCols.Count > 2)
+                                defCommandOff = datCols[2];
+
+                            if (string.IsNullOrEmpty(defText))
+                                defText = currentTab + "_" + button_count.ToString("D2");
+
+                            //Creates Button
+                            ChaosHudCheckBox tempBtn = new ChaosHudCheckBox(defText, defCommandOn, defCommandOff);
+                            ChaosHudCheckBox tempPopBtn = new ChaosHudCheckBox(defText, defCommandOn, defCommandOff);
+                            tempBtn.MirrorCheckBox = tempPopBtn;
+                            tempPopBtn.MirrorCheckBox = tempBtn;
+
+                            tempBtn.InternalName = currentTab + "_CheckBox_" + button_count.ToString("D2");
+                            tempPopBtn.InternalName = currentTab + "_CheckBox_" + button_count.ToString("D2");
+
+                            newMainControl = tempBtn;
+
+                        }
+
+
+                        // if we generated a control, finalize it by performing layout and registration
+                        if (newMainControl != null || /*haxx to allow "Spacer" as a noop*/directive.IndexOf("Spacer", StringComparison.InvariantCultureIgnoreCase) != -1)
+                        {
+
+                            // do we REAALLY have a control?
+                            if (newMainControl != null)
+                            {
+                                int x = (padding * (currentCol)) + (buttonWidth * (currentCol - 1));
+                                int y = (padding * (currentRow)) + (buttonHeight * (currentRow - 1));
+                                int btnW = (buttonWidth * span) + (padding * (span - 1));
+                                int btnH = buttonHeight;
+
+
+                                tempLayout.AddControl(newMainControl.AsHudControl, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                                popoutWindows[currentTab].AddControl(newMainControl.Mirror, new System.Drawing.Rectangle(x, y, btnW, btnH));
+                            }
+
+
+                            // handle layout update
+                            currentCol += span;
+                            if (currentCol > cols)
+                            {
+                                currentCol = 1;
+                                currentRow++;
+                            }
+
+                            button_count++;
+                        } else
+                        {
+                            Util.WriteToChat($"Failed to parse layout line: {line}");
+                        }
+
+
                     }
                 }
 
@@ -401,6 +576,63 @@ namespace ChaosHelper
             }
         }
 
+        /// <summary>
+        /// Dynamically generates the final command string from provided values and dispatches message to game.
+        /// </summary>
+        public static void DispatchCommand(string command, string param)
+        {
+            PluginCore.DispatchChatToBoxWithPluginIntercept(Instance.GenerateFinalCommandString(command, param));
+        }
+
+        private string GenerateFinalCommandString(string command, string param)
+        {
+            if (string.IsNullOrEmpty(command))
+                return null;
+
+            if (command.Contains("[player]"))
+            {
+                command = command.Replace("[player]", Core.CharacterFilter.Name);
+            }
+
+            if (command.Contains("[loc]"))
+            {
+                command = command.Replace("[loc]", Core.WorldFilter.GetByName(Core.CharacterFilter.Name).First.Coordinates().ToString());
+            }
+
+            if (command.Contains("[chatloc]"))
+            {
+                command = command.Replace("[chatloc]", chatLoc);
+            }
+
+            var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
+
+            if (command.StartsWith("/") || regexItem.IsMatch(command))
+            {
+                //if is a /tell command
+                if (!string.IsNullOrEmpty(param) && command.StartsWith("/"))
+                {
+                    return command + "," + param;
+                }
+                //Handle / commands
+                else if (command.StartsWith("/"))
+                {
+                    return command;
+                }
+                //Handle raw text
+                else
+                {
+                    return chatLoc + " " + command;
+                }
+
+
+            }
+            else
+            {
+
+                return chatLoc + " " + command;
+            }
+        }
+
         void LoadConfig(string configName)
         {
             for (int i = 0; i < ConfigChoice.Count; i++)
@@ -414,23 +646,58 @@ namespace ChaosHelper
             string[] configInfo = Util.GetConfig(configName.Trim());
             if(configInfo != null)
             {
-                foreach(string line in configInfo)
+                foreach(string _line in configInfo)
                 {
+                    string line = _line.Trim();
+
+                    // trim comment
+                    int commentIndex = line.IndexOf("~~");
+                    if (commentIndex == -1)
+                        commentIndex = line.IndexOf("//");
+                    if (commentIndex != -1)
+                        line = line.Substring(0, commentIndex).Trim();
+
                     try
                     {
-                        if(line.Contains("LAYOUT:"))
-                        {                       
-                            string layoutTemp = line.Remove(0, "LAYOUT:".Length).Trim();
-                            GenerateLayout(layoutTemp);
+                        if(line.StartsWith("LAYOUT:", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            string[] parts = line.Split(':');
+                            if (parts.Length < 2)
+                                continue;
+
+                            GenerateLayout(parts[1].Trim());
                         }
                         else
                         {
                             string[] col = line.Split(',');
-                            if(view[col[0]].GetType() == typeof(HudButton))
-                            {
-                                HudButton temp = (HudButton)view[col[0]];
+                            
+                            // perhaps we have a single-column control declaration like a break/spacer;  so make a "fake" array with just the control name
+                            if (col.Length == 0)
+                                col = new string[] { line };
 
-                                string currentTabName = col[0].Substring(0, col[0].IndexOf('_'));
+
+                            // isolate control name and control object
+                            string ctrlName = col[0];
+                            if (string.IsNullOrEmpty(ctrlName))// might be a blank line.. skip
+                                continue;
+
+                            IChaosHudControl ctrl;
+                            try
+                            {
+                                ctrl = view[ctrlName] as IChaosHudControl;
+                            }
+                            catch
+                            {
+                                Util.WriteToChat($"Cannot find {ctrlName} when parsing {configName.Trim()}; check your .layout file!");
+                                continue;
+                            }
+
+
+                            if(ctrl is ChaosHudButton)
+                            {
+                                ChaosHudButton temp = (ChaosHudButton)ctrl;
+
+                                string currentTabName = ctrlName.Substring(0, ctrlName.IndexOf('_'));
                                 //check if button exists
                                 if (temp != null)
                                 {
@@ -438,7 +705,7 @@ namespace ChaosHelper
                                     if (col[1].Contains("NOTSET"))
                                     {
                                         temp.Visible = false;
-                                        popoutWindows[currentTabName].ChangeBtnInfo(col[0], false, "");
+                                        temp.Mirror.Visible = false;
                                     }
                                     //If button is an image button
                                     
@@ -461,10 +728,10 @@ namespace ChaosHelper
                                                 iconImage = int.Parse(clean);
 
                                                 VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
-                                                popoutWindows[currentTabName].SetImage(col[0], tempImage);
-                                                popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, "");
+                                                popoutWindows[currentTabName].SetImage(ctrlName, tempImage);
                                                 temp.Image = tempImage;
                                                 temp.Text = "";
+                                                temp.Mirror.Text = "";
                                             }
                                             else
                                             {
@@ -475,8 +742,7 @@ namespace ChaosHelper
                                                 {
                                                     if(int.TryParse(imageSettings[1], out iconBG))
                                                     {
-                                                        popoutWindows[currentTabName].SetImage(col[0], new VirindiViewService.ACImage(iconImage));
-                                                        popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, "");
+                                                        popoutWindows[currentTabName].SetImage(ctrlName, new VirindiViewService.ACImage(iconImage));
 
                                                         temp.Image = new VirindiViewService.ACImage(iconImage); 
                                                         temp.Image = new VirindiViewService.ACImage(iconBG);
@@ -484,18 +750,19 @@ namespace ChaosHelper
                                                         if (imageSettings.Length == 3)
                                                         {
                                                             temp.Text = imageSettings[2];
+                                                            temp.Mirror.Text = imageSettings[2];
                                                         }
 
                                                     }
                                                     else
                                                     {
                                                         VirindiViewService.ACImage tempImage = new VirindiViewService.ACImage(iconImage);
-                                                        popoutWindows[currentTabName].SetImage(col[0], tempImage);
-                                                        popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, imageSettings[1]);
+                                                        popoutWindows[currentTabName].SetImage(ctrlName, tempImage);
                                                         temp.Image = tempImage;
                                                         if(imageSettings.Length == 2)
                                                         {
                                                             temp.Text = imageSettings[1];
+                                                            temp.Mirror.Text = imageSettings[1];
                                                         }
                                                         
                                                     }
@@ -506,141 +773,160 @@ namespace ChaosHelper
                                         else
                                         {
                                             temp.Text = col[1];
-                                            popoutWindows[currentTabName].ChangeBtnInfo(col[0], true, col[1]);
+                                            temp.Mirror.Text = col[1];
                                         }
 
                                         temp.Visible = true;
-                                        
+                                        temp.Mirror.Visible = true;
+
                                         //Creates the event handler for each button
 
-                                        if(col[2].Contains("[player]"))
-                                        {
-                                            col[2] = col[2].Replace("[player]", Core.CharacterFilter.Name);
-                                        }
+                                        string strCommand = null;
+                                        if (col.Length > 2)
+                                            strCommand = col[2];
 
-                                        if(col[2].Contains("[loc]"))
-                                        {
-                                            col[2] = col[2].Replace("[loc]", Core.WorldFilter.GetByName(Core.CharacterFilter.Name).First.Coordinates().ToString());
-                                        }
+                                        string strParam = null;
+                                        if (col.Length > 3)
+                                            strParam = col[3];
 
-                                        var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
 
-                                        if (col[2].StartsWith("/") || regexItem.IsMatch(col[2]))
-                                        {
-                                            //if is a /tell command
-                                            if (col.Length == 4 && col[2].StartsWith("/"))
-                                            {
-                                                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2] + "," + col[3]));
-                                                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2] + "," + col[3]));
+                                        // override command for main form
+                                        temp.Command = strCommand;
+                                        temp.Param = strParam;
 
-                                                popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
-
-                                                if (regEvents.ContainsKey(col[0]))
-                                                {
-                                                    //Unregister the event handler
-                                                    temp.Hit -= regEvents[col[0]];
-
-                                                    //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[col[0]] = newEvent;
-                                                }
-                                                else
-                                                {
-                                                    //Replace the event
-                                                    regEvents[col[0]] = newEvent;
-                                                }
-
-                                                //Register the event
-
-                                                temp.Hit += newEvent;
-                                            }
-                                            //Handle / commands
-                                            else if(col[2].StartsWith("/"))
-                                            {
-                                                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2]));
-                                                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, col[2]));
-
-                                                popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
-
-                                                if (regEvents.ContainsKey(col[0]))
-                                                {
-                                                    //Unregister the event handler
-                                                    temp.Hit -= regEvents[col[0]];
-
-                                                    //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[col[0]] = newEvent;
-                                                }
-
-                                                else
-                                                {
-                                                    //Replace the event
-                                                    regEvents[col[0]] = newEvent;
-                                                }
-
-                                                //Register the event
-                                                temp.Hit += newEvent;
-                                            }
-                                            //Handle raw text
-                                            else
-                                            {
-                                                EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-                                                EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-
-                                                popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
-
-                                                if (regEvents.ContainsKey(col[0]))
-                                                {
-                                                    //Unregister the event handler
-                                                    temp.Hit -= regEvents[col[0]];
-
-                                                    //Store the event inside the dictionary so we can unregister it later
-                                                    regEvents[col[0]] = newEvent;
-                                                }
-
-                                                else
-                                                {
-                                                    //Replace the event
-                                                    regEvents[col[0]] = newEvent;
-                                                }
-
-                                                //Register the event
-                                                temp.Hit += newEvent;
-                                            }
-
-                                            
-                                        }
-                                        else
-                                        {
-                                          
-                                            EventHandler newEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-                                            EventHandler newPopupEvent = new EventHandler((s, e) => ClickCommand(s, e, chatLoc + " " + col[2]));
-
-                                            popoutWindows[currentTabName].SetEvent(col[0], newPopupEvent);
-
-                                            if (regEvents.ContainsKey(col[0]))
-                                            {
-                                                //Unregister the event handler
-                                                temp.Hit -= regEvents[col[0]];
-
-                                                //Store the event inside the dictionary so we can unregister it later
-                                                regEvents[col[0]] = newEvent;
-                                            }
-
-                                            else
-                                            {
-                                                //Replace the event
-                                                regEvents[col[0]] = newEvent;
-                                            }
-
-                                            //Register the event
-
-                                            temp.Hit += newEvent;
-                                        }
-
-                                       
+                                        // override command for popup form
+                                        temp.MirrorButton.Command = strCommand;
+                                        temp.MirrorButton.Param = strParam;
 
                                     }
                                 }
-                            }                            
+                            } else if (ctrl is ChaosHudStaticText)
+                            {
+                                ChaosHudStaticText temp = (ChaosHudStaticText)ctrl;
+
+                                //check if button exists
+                                if (temp != null)
+                                {
+                                    //Check if button should be set to visible
+                                    if (col[1].Contains("NOTSET"))
+                                    {
+                                        temp.Visible = false;
+                                        temp.Mirror.Visible = false;
+                                    }
+                                    //If button is an image button
+
+                                    // Register the button event handler and make visible
+                                    else
+                                    {
+                                        temp.Text = col[1];
+                                        temp.Mirror.Text = col[1];
+
+                                        temp.Visible = true;
+                                        temp.Mirror.Visible = true;
+                                    }
+                                }
+                            }
+                            else if (ctrl is ChaosHudCheckBox)
+                            {
+                                ChaosHudCheckBox temp = (ChaosHudCheckBox)ctrl;
+
+                                //check if button exists
+                                if (temp != null)
+                                {
+                                    //Check if button should be set to visible
+                                    if (col[1].Contains("NOTSET"))
+                                    {
+                                        temp.Visible = false;
+                                        temp.Mirror.Visible = false;
+                                    }
+                                    //If button is an image button
+
+                                    // Register the button event handler and make visible
+                                    else
+                                    {
+                                        string text = null;
+                                        string commandOn = null;
+                                        string commandOff = null;
+
+                                        if (col.Length > 1)
+                                            text = col[1];
+
+                                        if (col.Length > 2)
+                                            commandOn = col[2];
+
+                                        if (col.Length > 3)
+                                            commandOff = col[3];
+
+                                        temp.Text = text;
+                                        temp.Mirror.Text = text;
+
+                                        temp.Visible = true;
+                                        temp.Mirror.Visible = true;
+
+
+                                        // override command for main form
+                                        temp.OnCommand = commandOn;
+                                        temp.OffCommand = commandOff;
+
+
+                                        // override command for popout form
+                                        temp.MirrorCheckBox.OnCommand = commandOn;
+                                        temp.MirrorCheckBox.OffCommand = commandOff;
+                                    }
+                                }
+                            } else if (ctrl is ChaosHudToggleButton)
+                            {
+                                ChaosHudToggleButton temp = (ChaosHudToggleButton)ctrl;
+
+                                //check if button exists
+                                if (temp != null)
+                                {
+                                    //Check if button should be set to visible
+                                    if (col[1].Contains("NOTSET"))
+                                    {
+                                        temp.Visible = false;
+                                        temp.Mirror.Visible = false;
+                                    }
+                                    //If button is an image button
+
+                                    // Register the button event handler and make visible
+                                    else
+                                    {
+                                        string text = null;
+                                        string commandOn = null;
+                                        string commandOff = null;
+
+                                        if (col.Length > 1)
+                                            text = col[1];
+
+                                        if (col.Length > 2)
+                                            commandOn = col[2];
+
+                                        if (col.Length > 3)
+                                            commandOff = col[3];
+
+                                        temp.Text = text;
+                                        temp.Mirror.Text = text;
+
+                                        temp.Visible = true;
+                                        temp.Mirror.Visible = true;
+
+
+                                        // override command for main form
+                                        temp.OnCommand = commandOn;
+                                        temp.OffCommand = commandOff;
+
+
+                                        // override command for popout form
+                                        temp.MirrorToggleButton.OnCommand = commandOn;
+                                        temp.MirrorToggleButton.OffCommand = commandOff;
+                                    }
+                                }
+                            }
+
+
+
+
                         }
                     }
                     catch(Exception ex)
@@ -655,10 +941,6 @@ namespace ChaosHelper
             }
         }
 
-        private void ClickCommand(object sender, EventArgs e, string command)
-        {
-            DispatchChatToBoxWithPluginIntercept(command);
-        }
 
         //
         //  ?  Tab
@@ -832,6 +1114,9 @@ namespace ChaosHelper
         /// <param name="cmd"></param>
         public static void DispatchChatToBoxWithPluginIntercept(string cmd)
         {
+            if (string.IsNullOrEmpty(cmd))
+                return;
+
             if (!Decal_DispatchOnChatCommand(cmd))
                 CoreManager.Current.Actions.InvokeChatParser(cmd);
         }

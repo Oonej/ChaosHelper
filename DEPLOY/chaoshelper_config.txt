@@ -1,0 +1,134 @@
+// import the layout file;  every config needs at least one!
+LAYOUT: main.layout
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~ double tilde works as comments, too
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+// now add definitions for all your button declarations from layout file!
+//
+//
+// as of 2.2.6.0  these are considered optional overrides;  you could specify
+// this information as defaults in the  .layout  file and remove their
+// corresponding entries from this  .txt  file
+//
+// (unless you are doing something specific like multiple .TXT files
+// referencing the same .LAYOUT file)
+
+
+// portals tab
+Ports_Button_01,Use Portal,!portal 
+Ports_Button_02,[9561],!prim
+Ports_Button_03,[9562],!sec 
+Ports_Button_04,[10733],!pr 				~~ random comment for testing
+Ports_Button_05,[10725],!aphus 
+Ports_Button_06,[10727],!sanc 
+Ports_Button_07,[10728],!caul 
+Ports_Button_08,[25233],!gw 
+Ports_Button_09,[10724],!aer 
+Ports_Button_10,[10726],!lethe 
+Ports_Button_11,[10729],!ulgrim 
+Ports_Button_12,[26219],!bur 
+Ports_Button_13,[26325],!olthoi 
+Ports_Button_14,[26293],!gy 
+Ports_Button_15,[26329],!colo 
+Ports_Button_16,[28169],!gk 
+Ports_Button_17,[28659],!nef 
+Ports_Button_18,[19347],!candeth 
+Ports_Button_19,[28915],!fachub 
+Ports_Button_20,[28187],!rynth 
+Ports_Button_21,[9560],!lst 
+Ports_Button_22,[9441],!ls 
+Ports_Button_23,[8588],!ah 
+Ports_Button_24,[8590],!hom 
+Ports_Button_25,[8383],!hr 
+
+// attacks tab
+Atk_Button_01,Atk Low,!attklow 
+Atk_Button_02,Atk Mid,!attkmed 
+Atk_Button_03,Atk High,!attkhigh 
+Atk_Button_04,NOTSET,!command 
+Atk_Button_05,Atk Range 5,!rangelow 
+Atk_Button_06,Atk Range 15,!rangemed 
+Atk_Button_07,Atk Range 30,!rangehigh 
+Atk_Button_08,Atk Range 60,!rangemax 
+Atk_Button_09,NOTSET,!command 
+
+// ranges tab
+Rngs_Button_01,Approach Low,!approachlow 
+Rngs_Button_02,Follow Low,!frangelow 
+Rngs_Button_03,Approach Med,!approachmed 
+Rngs_Button_04,Follow Med,!frangemed 
+Rngs_Button_05,Approach High,!approachhigh 
+Rngs_Button_06,Follow High,!frangehigh 
+Rngs_Button_07,Approach Max,!approachmax 
+Rngs_Button_08,Follow Max,!frangemax 
+Rngs_Button_09,NOTSET,!command 
+Rngs_Button_10,NOTSET,!command 
+Rngs_Button_11,NOTSET,!command 
+Rngs_Button_12,NOTSET,!command 
+Rngs_Button_13,NOTSET,!command 
+Rngs_Button_14,NOTSET,!command 
+
+// jumps tab
+Jump_Button_01,Forward 100,!fjump100	 
+Jump_Button_02,NOTSET,!command 
+Jump_Button_03,NOTSET,!command 
+Jump_Button_04,NOTSET,!command 
+Jump_Button_05,NOTSET,!command 
+Jump_Button_06,NOTSET,!command 
+Jump_Button_07,Shift 100,!sjump100 
+Jump_Button_08,NOTSET,!command 
+Jump_Button_09,NOTSET,!command 
+Jump_Button_10,NOTSET,!command
+Jump_Button_11,NOTSET,!command 
+Jump_Button_12,NOTSET,!command 
+Jump_Button_13,NOTSET,!command 
+Jump_Button_14,NOTSET,!command 
+Jump_Button_15,NOTSET,!command 
+Jump_Button_16,NOTSET,!command 
+Jump_Button_17,Forward 75,!fjump75 
+Jump_Button_18,NOTSET,!command 
+Jump_Button_19,NW,!facenw 
+Jump_Button_20,N,!facen
+Jump_Button_21,NE,!facene
+Jump_Button_22,NOTSET,!command 
+Jump_Button_23,Shift 75,!sjump75 
+Jump_Button_24,NOTSET,!command 
+Jump_Button_25,NOTSET,!command 
+Jump_Button_26,NOTSET,!command 
+Jump_Button_27,W,!facew 
+Jump_Button_28,NOTSET,!command 
+Jump_Button_29,E,!facee
+Jump_Button_30,NOTSET,!command
+Jump_Button_31,NOTSET,!command 
+Jump_Button_32,NOTSET,!command 
+Jump_Button_33,Forward 50,!fjump50 
+Jump_Button_34,NOTSET,!command 
+Jump_Button_35,SW,!facesw 
+Jump_Button_36,S,!faces 
+Jump_Button_37,SE,!facese 
+Jump_Button_38,NOTSET,!command 
+Jump_Button_39,Shift 50,!sjump50
+Jump_Button_40,NOTSET,!command
+Jump_Button_41,NOTSET,!command 
+Jump_Button_42,NOTSET,!command 
+Jump_Button_43,NOTSET,!command 
+Jump_Button_44,NOTSET,!command 
+Jump_Button_45,NOTSET,!command 
+Jump_Button_46,NOTSET,!command 
+Jump_Button_47,NOTSET,!command 
+Jump_Button_48,NOTSET,!command 
+Jump_Button_49,Forward 25,!fjump25
+Jump_Button_50,NOTSET,!command
+Jump_Button_51,NOTSET,!command 
+Jump_Button_52,NOTSET,!command 
+Jump_Button_53,NOTSET,!command 
+Jump_Button_54,NOTSET,!command 
+Jump_Button_55,Shift 25,!sjump25 
+
+// miscellaneous tab
+Misc_Button_01,Use Npc,!npc 
+Misc_Button_02,Use Vendor,!vendor 
+Misc_Button_03,/MP,!mp 
+Misc_Button_04,NOTSET,!command

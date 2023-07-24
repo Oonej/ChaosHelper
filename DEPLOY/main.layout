@@ -1,0 +1,206 @@
+// main window properties
+windowposition: 50,50
+windowstartopen: false
+windowsize: 330,200
+buttonpadding: 10
+
+
+// now we define our tabs and what controls we want in them
+
+tab: Emotes
+	tabvisible: false
+	tabsize: 340,400
+	tabposition: 390,50		// random comment for testing
+	cols : 2
+	rows: 7
+		StaticText	2,Instants
+		Button		1,Hearty Laugh,/say *heartylaugh*
+		Button		1,Cheer,/say *cheer*
+		Button		1,YMCA,/say *ymca*
+		Spacer		1
+
+		StaticText	2,State Toggles
+		ToggleButton	1,Kneel,/say *kneel*,/say *nod*
+		ToggleButton	1,Salute,/say *salute*,/say *nod*
+		ToggleButton	1,Surrender,/say *surrender*,/say *nod*
+		ToggleButton	1,At Ease,/say *atease*,/say *nod*
+		ToggleButton	1,atoyot,/say *atoyot*,/say *nod*
+		Spacer		1
+	
+
+tab: Basic
+	tabvisible: false
+	tabsize: 340,400
+	tabposition: 390,50
+	cols : 2
+	rows: 6
+		StaticText	2,States
+		ToggleButton	1,Combat,!combat on,!combat off
+		ToggleButton	1,Buff,!buff on,!buff off
+		ToggleButton	1,Nav,!nav on,!nav off
+		ToggleButton	1,Loot,!loot on,!loot off
+
+		StaticText	2,Overrides
+		Button		1,All On,!all on
+		Button		1,Clear,!clear
+		Button		1,Force Buff,!forcebuff
+		Button		1,Cancel Buff,!cancelbuff
+
+tab: Adv 
+	tabvisible: false
+	tabsize: 340, 300
+	tabposition: 390, 50
+	cols: 2  
+	rows: 6
+		StaticText	2,Instants  
+		Button		1,Loot Rares,!loot rares 
+		Button		1,Loot All,!loot all 
+
+		StaticText	2,States
+		ToggleButton	1,Jiggle,!jiggle on,!jiggle off
+		ToggleButton	1,Peace,!peace on,!peace off
+		ToggleButton	1,Nav Boost,!navboost on,!navboost off
+		ToggleButton	1,Summon,!sum on,!sum off
+		ToggleButton	1,Corners,!corners on,!corners off
+
+tab: Ports 
+	tabvisible: false
+	tabsize: 340, 250
+	tabposition: 390, 50
+	cols: 6  
+	rows: 5  
+		Button_01: 6
+		Button_02: 1
+		Button_03: 1
+		Button_04: 1
+		Button_05: 1
+		Button_06: 1
+		Button_07: 1
+		Button_08: 1
+		Button_09: 1
+		Button_10: 1
+		Button_11: 1
+		Button_12: 1
+		Button_13: 1
+		Button_14: 1
+		Button_15: 1
+		Button_16: 1
+		Button_17: 1
+		Button_18: 1
+		Button_19: 1
+		Button_20: 1
+		Button_21: 1
+		Button_22: 1
+		Button_23: 1
+		Button_24: 1
+		Button_25: 1
+
+tab: Atk 
+	tabvisible: false
+	tabsize: 340, 300
+	tabposition: 390, 50
+	cols: 3  
+	rows: 6  
+		Button_01: 1
+		Button_02: 1
+		Button_03: 1
+		Button_04: 3
+		Button_05: 3
+		Button_06: 3
+		Button_07: 3
+		Button_08: 3
+		Button_09: 3
+
+tab: Rngs
+	tabvisible: false
+	tabsize: 340, 250
+	tabposition: 390, 50
+	cols: 2  
+	rows: 4  
+		Button_01: 1
+		Button_02: 1
+		Button_03: 1
+		Button_04: 1
+		Button_05: 1
+		Button_06: 1
+		Button_07: 1
+		Button_08: 1
+		Button_09: 1
+		Button_10: 1
+		Button_11: 1
+		Button_12: 1
+		Button_13: 1
+		Button_14: 1
+
+tab: Jump
+	tabvisible: false
+	tabsize: 350, 300
+	tabposition: 390, 50
+	cols: 9
+	rows: 7 
+		Button_01: 2
+		Button_02: 1
+		Button_03: 1
+		Button_04: 1
+		Button_05: 1
+		Button_06: 1
+		Button_07: 2
+		Button_08: 1
+		Button_09: 1
+		Button_10: 1
+		Button_11: 1
+		Button_12: 1
+		Button_13: 1
+		Button_14: 1
+		Button_15: 1
+		Button_16: 1
+		Button_17: 2
+		Button_18: 1
+		Button_19: 1
+		Button_20: 1
+		Button_21: 1
+		Button_22: 1
+		Button_23: 2
+		Button_24: 1
+		Button_25: 1
+		Button_26: 1
+		Button_27: 1
+		Button_28: 1
+		Button_29: 1
+		Button_30: 1
+		Button_31: 1
+		Button_32: 1
+		Button_33: 2
+		Button_34: 1
+		Button_35: 1
+		Button_36: 1
+		Button_37: 1
+		Button_38: 1
+		Button_39: 2
+		Button_40: 1
+		Button_41: 1
+		Button_42: 1
+		Button_43: 1
+		Button_44: 1
+		Button_45: 1
+		Button_46: 1
+		Button_47: 1
+		Button_48: 1
+		Button_49: 2
+		Button_50: 1
+		Button_51: 1
+		Button_52: 1
+		Button_53: 1
+		Button_54: 1
+		Button_55: 2
+
+tab: Misc
+	tabvisible: false
+	tabsize: 340, 150
+	tabposition: 390, 50
+	cols: 2  
+	rows: 2  
+		Button_01: 1
+		Button_02: 1
+		Button_03: 1
+		Button_04: 1

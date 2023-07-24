@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using VirindiViewService.Controls;
+using ChaosHelper.VirindiControlExtensions;
 
 namespace ChaosHelper
 {
@@ -12,8 +13,6 @@ namespace ChaosHelper
 
         private HudFixedLayout popoutTempLayout = new HudFixedLayout();
         private HudCheckBox thisCheckBox;
-        
-        private Dictionary<string, EventHandler> regEvents = new Dictionary<string, EventHandler>();
 
         private System.Drawing.Size windowsize;
 
@@ -42,48 +41,19 @@ namespace ChaosHelper
                 thisCheckBox.Checked = false;
         }
 
-        public void AddButton(HudButton button, System.Drawing.Rectangle rect)
+        public void AddControl(IChaosHudControl ctrl, System.Drawing.Rectangle rect)
         {
-            popoutTempLayout.AddControl(button, rect);
-        }
-
-        public void AddButton(HudImageButton button, System.Drawing.Rectangle rect)
-        {
-            popoutTempLayout.AddControl(button, rect);
-        }
-
-        public void SetEvent(string name, EventHandler e)
-        {
-                HudButton temp = (HudButton)popoutview[name];
-
-                if (regEvents.ContainsKey(name))
-                {
-                    //Unregister the event handler
-                    temp.Hit -= regEvents[name];
-                    //Store the event inside the dictionary so we can unregister it later
-                    regEvents[name] = e;
-                }
-                else
-                {
-                    //Replace the event
-                    regEvents[name] = e;
-                }
-
-                temp.Hit += e;            
+            popoutTempLayout.AddControl(ctrl.AsHudControl, rect);
         }
 
         public void SetImage(string name, VirindiViewService.ACImage image)
         {
-            HudButton temp = (HudButton)popoutview[name];
-            temp.Image = image;
-        }
+            IChaosHudControl ctrl = popoutview[name] as IChaosHudControl;
+            if (ctrl == null)
+                return;
 
-        public void ChangeBtnInfo(string name, bool visibility, string btnText)
-        {
-            HudButton temp = (HudButton)popoutview[name];
-
-            temp.Visible = visibility;
-            temp.Text = btnText;
+            if(ctrl is ChaosHudButton)
+                (ctrl as ChaosHudButton).Image = image;
         }
 
         public void SetWindowSize(System.Drawing.Size windowsize)
