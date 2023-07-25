@@ -232,7 +232,7 @@ namespace ChaosHelper
 
             TabView.OpenTabChange += new EventHandler(TabChanged);
 
-            VersionLbl.Text = "Version 2.2.6.0";
+            VersionLbl.Text = "Version 2.2.6.1";
             ChatCommand.Text = chatLoc;
         }
 
@@ -403,25 +403,30 @@ namespace ChaosHelper
 
                         if (directive.IndexOf("ToggleButton", StringComparison.InvariantCultureIgnoreCase) != -1)//must check before regular Button
                         {
-                            string defText = null;
+                            string defTextOff = null;
+                            string defTextOn = null;
                             string defCommandOn = null;
                             string defCommandOff = null;
 
-                            if (datCols.Count > 0)
-                                defText = datCols[0];
-
-                            if (datCols.Count > 1)
+                            if (datCols.Count == 3)
+                            {
+                                defTextOff = datCols[0];
                                 defCommandOn = datCols[1];
-
-                            if (datCols.Count > 2)
                                 defCommandOff = datCols[2];
+                            } else if(datCols.Count == 4)
+                            {
+                                defTextOff = datCols[0];
+                                defTextOn = datCols[1];
+                                defCommandOn = datCols[2];
+                                defCommandOff = datCols[3];
+                            }
 
-                            if (string.IsNullOrEmpty(defText))
-                                defText = currentTab + "_" + button_count.ToString("D2");
+                            if (string.IsNullOrEmpty(defTextOff))
+                                defTextOff = currentTab + "_" + button_count.ToString("D2");
 
                             //Creates Button
-                            ChaosHudToggleButton tempBtn = new ChaosHudToggleButton(defText, defCommandOn, defCommandOff);
-                            ChaosHudToggleButton tempPopBtn = new ChaosHudToggleButton(defText, defCommandOn, defCommandOff);
+                            ChaosHudToggleButton tempBtn = new ChaosHudToggleButton(defTextOff, defTextOn, defCommandOn, defCommandOff);
+                            ChaosHudToggleButton tempPopBtn = new ChaosHudToggleButton(defTextOff, defTextOn, defCommandOn, defCommandOff);
                             tempBtn.MirrorToggleButton = tempPopBtn;
                             tempPopBtn.MirrorToggleButton = tempBtn;
 
@@ -892,21 +897,28 @@ namespace ChaosHelper
                                     // Register the button event handler and make visible
                                     else
                                     {
-                                        string text = null;
+                                        string textOff = null;
+                                        string textOn = null;
                                         string commandOn = null;
                                         string commandOff = null;
 
-                                        if (col.Length > 1)
-                                            text = col[1];
-
-                                        if (col.Length > 2)
+                                        if(col.Length == 4)
+                                        {
+                                            textOff = col[1];
                                             commandOn = col[2];
-
-                                        if (col.Length > 3)
                                             commandOff = col[3];
+                                        } else if(col.Length == 5)
+                                        {
+                                            textOff = col[1];
+                                            textOn = col[2];
+                                            commandOn = col[3];
+                                            commandOff = col[4];
+                                        }
 
-                                        temp.Text = text;
-                                        temp.Mirror.Text = text;
+                                        temp.Text = textOff;
+                                        temp.TextAlt = textOn;
+                                        temp.Mirror.Text = textOff;
+                                        (temp.Mirror as ChaosHudToggleButton).TextAlt = textOn;
 
                                         temp.Visible = true;
                                         temp.Mirror.Visible = true;
