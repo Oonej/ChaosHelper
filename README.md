@@ -82,6 +82,12 @@ _ex:_ _Basic_ToggleButton_04,Combat,!combat on,_**!combat off**
 
 - _"off" command if `ToggleButton`_
 
+#### (5) FIFTH COLUMN: Extra parameter for some controls
+
+_ex:_ _Basic_ToggleButton_04,No loot,_**Yeaa Loot**_,!loot on,!loot off
+
+- ToggleButton normally postfixes OFF/ON text on the button. Alternatively, you can provide two text strings to switch between
+
 ##### Example:
 ```
 LAYOUT: main.layout

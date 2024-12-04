@@ -152,6 +152,22 @@ namespace ChaosHelper
                 }
             }
 
+            private string _TextAlt = null;
+            public string TextAlt
+            {
+                get
+                {
+                    return _TextAlt;
+                }
+
+                set
+                {
+                    _TextAlt = value;
+
+                    Invalidate();
+                }
+            }
+
             private bool _Checked = false;
             public bool Checked
             {
@@ -171,9 +187,10 @@ namespace ChaosHelper
             public ChaosHudToggleButton MirrorToggleButton = null;
             public IChaosHudControl Mirror { get { return MirrorToggleButton; } }
 
-            public ChaosHudToggleButton(string _Text, string _OnCommand, string _OffCommand)
+            public ChaosHudToggleButton(string _Text, string _TextAlt, string _OnCommand, string _OffCommand)
             {
                 Text = _Text;
+                TextAlt = _TextAlt;
                 OnCommand = _OnCommand;
                 OffCommand = _OffCommand;
 
@@ -243,7 +260,10 @@ namespace ChaosHelper
             {
                 get
                 {
-                    return $"{Text}: {(Checked ? "ON" : "OFF")}";
+                    if(TextAlt != null)
+                        return $"{(Checked ? TextAlt : Text)}";
+                    else
+                        return $"{Text}: {(Checked ? "ON" : "OFF")}";
                 }
             }
 
